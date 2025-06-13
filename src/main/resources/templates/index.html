@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<meta charset="UTF-8">
+<head>
+    <title>Документный инструмент</title>
+</head>
+<body>
+<h2>1. Изменение и конвертация Word</h2>
+<form th:action="@{/process}" method="post" th:object="${form}">
+    <label>Путь к .docx:</label>
+    <input type="text" th:field="*{docPath}" /><br />
+
+    <label>Путь до файла Excel:</label>
+    <input type="text" th:field="*{pathExcel}" /><br />
+
+    <label>Папка для PDF:</label>
+    <input type="text" th:field="*{pathDirectory}" /><br />
+
+    <label>Фамилия и инициалы:</label>
+    <input type="text" th:field="*{lastName}" /><br />
+
+    <label>Дата:</label>
+    <input type="text" th:field="*{data}" placeholder="по желанию" /><br />
+
+    <button type="submit">Обработать и сохранить в PDF</button>
+</form>
+
+<div th:if="${result}" th:text="${result}" style="color:green"></div>
+<div th:if="${error}" th:text="${error}" style="color:red"></div>
+
+<hr />
+
+<h2>2. Объединить все PDF в один</h2>
+<form action="/merge" method="post">
+    <label>Путь к папке с PDF:</label>
+    <input type="text" name="pdfInputFolder" />
+    <button type="submit">Склеить PDF</button>
+</form>
+
+<div th:if="${mergeResult}" th:text="${mergeResult}" style="color:green"></div>
+<div th:if="${mergeError}" th:text="${mergeError}" style="color:red"></div>
+</body>
+</html>
