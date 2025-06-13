@@ -20,13 +20,14 @@ public class DocumentController {
         model.addAttribute("form", new DocumentFormDTO());
         return "index";
     }
-@PostMapping("/process")
+
+    @PostMapping("/process")
     public String process(DocumentFormDTO documentFormDTO, Model model) {
 
         try {
-            documentService.process( documentFormDTO);
+            documentService.process(documentFormDTO);
 
-            model.addAttribute("result", "PDF создан по пути: " + documentFormDTO.getDocPath() + "/merged_output.pdf");
+            model.addAttribute("result", "PDF создан по пути: " + documentFormDTO.getPathDirectory() + "/merged_output.pdf");
         } catch (Exception e) {
             model.addAttribute("error", "Ошибка: " + e.getMessage());
         }
@@ -37,8 +38,8 @@ public class DocumentController {
     @PostMapping("/merge")
     public String mergePdfs(@RequestParam String pdfInputFolder, Model model) {
         try {
-           documentService.mergePdf(pdfInputFolder);
-            model.addAttribute("mergeResult", "Все PDF объединены " );
+            documentService.mergePdf(pdfInputFolder);
+            model.addAttribute("mergeResult", "Все PDF объединены ");
         } catch (Exception e) {
             model.addAttribute("mergeError", "Ошибка слияния: " + e.getMessage());
         }

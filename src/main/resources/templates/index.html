@@ -8,16 +8,16 @@
 <h2>1. Изменение и конвертация Word</h2>
 <form th:action="@{/process}" method="post" th:object="${form}">
     <label>Путь к .docx:</label>
-    <input type="text" th:field="*{docPath}" /><br />
+    <input type="text" th:field="*{docPath}"placeholder="пример C:\Users\java\Desktop\БНШИ.667755.012 ПС (УПП-18).docx"  style="width: 400px;"/><br />
 
     <label>Путь до файла Excel:</label>
-    <input type="text" th:field="*{pathExcel}" /><br />
+    <input type="text" th:field="*{pathExcel}" placeholder="C:\Users\java\Desktop\Книга1.xlsx" style="width: 345px;" /><br />
 
     <label>Папка для PDF:</label>
-    <input type="text" th:field="*{pathDirectory}" /><br />
+    <input type="text" th:field="*{pathDirectory}"  placeholder=" пример C:\Users\java\Desktop\20231204" style="width: 382px;"/><br />
 
     <label>Фамилия и инициалы:</label>
-    <input type="text" th:field="*{lastName}" /><br />
+    <input type="text" th:field="*{lastName}" placeholder="пример Долгов А.А." /><br />
 
     <label>Дата:</label>
     <input type="text" th:field="*{data}" placeholder="по желанию" /><br />
