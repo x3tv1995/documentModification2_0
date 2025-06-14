@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.etna.documentmodification2_0.enums.CodeMapping;
 
+import java.io.FileNotFoundException;
 import java.util.*;
 @Service
 public class FilterEquipmentService {
@@ -41,7 +42,7 @@ private  NumberProductionService numberProductionService;
     }
 
     //Фильтрация по БНШИ
-    public  String filterBybnshi(String pathExcel) {
+    public  String filterBybnshi(String pathExcel) throws FileNotFoundException {
         List<String> arr = numberProductionService.numberProductionFromExcelInArray(pathExcel, 0, 0);
         String number = arr.get(0);
         String nameKey = EQUIPMENNT.entrySet()
@@ -69,7 +70,7 @@ private  NumberProductionService numberProductionService;
                     startupManagerService.enterDatabase(pathExcel,docPath,pathDirectory,
                             lastName,data,patternFirstBTR,patterDateBTR,sizeTextBTR,
                             patternSpaceBTR,numberSearchBTR,patternNumberBTR,replaceNumberBTR);
-                } catch (OfficeException e) {
+                } catch (OfficeException |FileNotFoundException e) {
                     throw new RuntimeException(e);
                 }
                 break;
@@ -88,7 +89,7 @@ private  NumberProductionService numberProductionService;
                     startupManagerService.enterDatabase(pathExcel,docPath,pathDirectory,
                             lastName,data,patternFirstTVKM,patterDateTVKM,sizeTextTVKM,patternSpaceTVKM,
                             numberSearchTVKM,patternNumberTVKM,replaceNumberTVKM);
-                } catch (OfficeException e) {
+                } catch (OfficeException |FileNotFoundException e) {
                     throw new RuntimeException(e);
                 }
                 break;
@@ -105,7 +106,7 @@ private  NumberProductionService numberProductionService;
                     startupManagerService.enterDatabase(pathExcel,docPath,pathDirectory,
                             lastName,data,patternFirstTRO,patterDateTRO,sizeTextTRO,patternSpaceTRO,
                             numberSearchTRO,patternNumberTRO,replaceNumberTRO);
-                } catch (OfficeException e) {
+                } catch (OfficeException |FileNotFoundException e) {
                     throw new RuntimeException(e);
                 }
                 break;
@@ -122,7 +123,7 @@ private  NumberProductionService numberProductionService;
                     startupManagerService.enterDatabase(pathExcel,docPath,pathDirectory,
                             lastName,data,patternFirstOKVT,patterDateOKVT,sizeTextOKVT,patternSpaceOKVT,
                             numberSearchOKVT,patternNumberOKVT,replaceNumberOKVT);
-                } catch (OfficeException e) {
+                } catch (OfficeException |FileNotFoundException e) {
                     throw new RuntimeException(e);
                 }
                 break;
@@ -139,7 +140,7 @@ private  NumberProductionService numberProductionService;
                             lastName,data,patternFirstEK,patterDateEK,
                             sizeTextEK,patternSpaceEK,numberSearchEK,
                             patternNumberEK,replaceNumberEK);
-                } catch (OfficeException e) {
+                } catch (OfficeException |FileNotFoundException e) {
                     throw new RuntimeException(e);
                 }
                 break;
@@ -156,7 +157,7 @@ private  NumberProductionService numberProductionService;
                             lastName,data,patternFirstEK6500,patterDateEK6500,
                             sizeTextEK6500,patternSpaceEK6500,numberSearchEK6500,
                             patternNumberEK6500,replaceNumberEK6500);
-                } catch (OfficeException e) {
+                } catch (OfficeException |FileNotFoundException e) {
                     throw new RuntimeException(e);
                 }
                 break;
@@ -173,7 +174,7 @@ private  NumberProductionService numberProductionService;
                     startupManagerService.enterDatabase(pathExcel,docPath,pathDirectory,
                             lastName,data,patternFirstORT,patterDateORT,sizeTextORT,patternSpaceORT,
                             numberSearchORT,patternNumberORT,replaceNumberORT);
-                } catch (OfficeException e) {
+                } catch (OfficeException |FileNotFoundException e) {
                     throw new RuntimeException(e);
                 }
                 break;
@@ -190,7 +191,7 @@ private  NumberProductionService numberProductionService;
                             lastName,data,patternFirstVVEK,patterDateVVEK,
                             sizeTextVVEK,patternSpaceVVEK,numberSearchVVEK,
                             patternNumberVVEK,replaceNumberVVEK);
-                } catch (OfficeException e) {
+                } catch (OfficeException |FileNotFoundException e) {
                     throw new RuntimeException(e);
                 }
                 break;
@@ -209,7 +210,7 @@ private  NumberProductionService numberProductionService;
                             lastName,data,patternFirstVVEK11400,patterDateVVEK11400,
                             sizeTextVVEK11400,patternSpaceVVEK11400,numberSearchVVEK11400,
                             patternNumberVVEK11400,replaceNumberVVEK11400);
-                } catch (OfficeException e) {
+                } catch (OfficeException |FileNotFoundException e) {
                     throw new RuntimeException(e);
                 }
                 break;
@@ -227,7 +228,7 @@ private  NumberProductionService numberProductionService;
                             lastName,data,patternFirstBRPP22,patterDateBRPP22,
                             sizeTextBRPP22,patternSpaceBRPP22,numberSearchBRPP22,
                             patternNumberBRPP22,replaceNumberBRPP22);
-                } catch (OfficeException e) {
+                } catch (OfficeException |FileNotFoundException e) {
                     throw new RuntimeException(e);
                 }
                 break;
@@ -244,7 +245,7 @@ private  NumberProductionService numberProductionService;
                             lastName,data,patternFirstBRPP60,patterDateBRPP60,
                             sizeTextBRPP60,patternSpaceBRPP60,numberSearchBRPP60,
                             patternNumberBRPP60,replaceNumberBRPP60);
-                } catch (OfficeException e) {
+                } catch (OfficeException |FileNotFoundException e) {
                     throw new RuntimeException(e);
                 }
                 break;
@@ -261,7 +262,7 @@ private  NumberProductionService numberProductionService;
                             lastName,data,patternFirstBVPP_02,patterDateBVPP_02,
                             sizeTextBVPP_02,patternSpaceBVPP_02,numberSearchBVPP_02,
                             patternNumberBVPP_02,replaceNumberBVPP_02);
-                } catch (OfficeException e) {
+                } catch (OfficeException |FileNotFoundException e) {
                     throw new RuntimeException(e);
                 }
                 break;
@@ -279,7 +280,7 @@ private  NumberProductionService numberProductionService;
                             lastName,data,patternFirstMIT,patterDateMIT,
                             sizeTextMIT,patternSpaceMIT,numberSearchMIT,
                             patternNumberMIT,replaceNumberMIT);
-                } catch (OfficeException e) {
+                } catch (OfficeException |FileNotFoundException e) {
                     throw new RuntimeException(e);
                 }
                 break;
@@ -296,7 +297,7 @@ private  NumberProductionService numberProductionService;
                     startupManagerService.enterDatabase(pathExcel,docPath,pathDirectory,
                             lastName,data,patternFirstBTR28D,patterDateBTR28D,sizeTextBTR28D,patternSpaceBTR28D,
                             numberSearchBTR28D,patternNumberBTR28D,replaceNumberBTR28D);
-                } catch (OfficeException e) {
+                } catch (OfficeException |FileNotFoundException e) {
                     throw new RuntimeException(e);
                 }
                 break;
@@ -313,7 +314,7 @@ private  NumberProductionService numberProductionService;
                             lastName,data,patternFirstYPP,patterDateYPP,
                             sizeTextYPP,patternSpaceYPP,numberSearchYPP,
                             patternNumberYPP,replaceNumberYPP);
-                } catch (OfficeException e) {
+                } catch (OfficeException |FileNotFoundException e) {
                     throw new RuntimeException(e);
                 }
                 break;
@@ -330,7 +331,7 @@ private  NumberProductionService numberProductionService;
                             lastName,data,patternFirstYPP18,patterDateYPP18,
                             sizeTextYPP18,patternSpaceYPP18,numberSearchYPP18,
                             patternNumberYPP18,replaceNumberYPP18);
-                } catch (OfficeException e) {
+                } catch (OfficeException |FileNotFoundException e) {
                     throw new RuntimeException(e);
                 }
                 break;
@@ -342,7 +343,7 @@ private  NumberProductionService numberProductionService;
                 try {
                     startupManagerService.enterDatabase(pathExcel,docPath,pathDirectory,
                             sizeTextDefault,numberSearchDefault,patternNumberDefault,replaceNumberDefault);
-                } catch (OfficeException e) {
+                } catch (OfficeException |FileNotFoundException e) {
                     throw new RuntimeException(e);
                 }
                 break;

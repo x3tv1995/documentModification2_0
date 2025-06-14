@@ -25,6 +25,7 @@ public class ScannerFileService {
             }
         }else {
             log.info("Папки не существует");
+           throw  new IllegalArgumentException("Папки не существует");
         }
         return listFilesPdfAbsolute;
     }

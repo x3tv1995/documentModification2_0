@@ -6,23 +6,24 @@
 </head>
 <body>
 <h2>1. Изменение и конвертация Word</h2>
-<form th:action="@{/process}" method="post" th:object="${form}">
-    <label>Путь к .docx:</label>
-    <input type="text" th:field="*{docPath}"placeholder="пример C:\Users\java\Desktop\БНШИ.667755.012 ПС (УПП-18).docx"  style="width: 400px;"/><br />
+<form th:action="@{/process}" method="post" th:object="${form}" enctype="multipart/form-data">
 
-    <label>Путь до файла Excel:</label>
-    <input type="text" th:field="*{pathExcel}" placeholder="C:\Users\java\Desktop\Книга1.xlsx" style="width: 345px;" /><br />
+    <label>Выберите .docx:</label><br/>
+    <input type="file" th:field="*{docPath}" accept=".docx" /><br/><br/>
 
-    <label>Папка для PDF:</label>
-    <input type="text" th:field="*{pathDirectory}"  placeholder=" пример C:\Users\java\Desktop\20231204" style="width: 382px;"/><br />
+    <label>Выберите .xlsx:</label><br/>
+    <input type="file" th:field="*{pathExcel}" accept=".xlsx" /><br/><br/>
 
-    <label>Фамилия и инициалы:</label>
-    <input type="text" th:field="*{lastName}" placeholder="пример Долгов А.А." /><br />
+    <label>Папка для PDF:</label><br/>
+    <input type="text" th:field="*{pathDirectory}" placeholder="C:\Output\" style="width: 250px;"/><br/><br/>
 
-    <label>Дата:</label>
-    <input type="text" th:field="*{data}" placeholder="по желанию" /><br />
+    <label>Фамилия и инициалы:</label><br/>
+    <input type="text" th:field="*{lastName}"  /><br/><br/>
 
-    <button type="submit">Обработать и сохранить в PDF</button>
+    <label>Дата:</label><br/>
+    <input type="text" th:field="*{data}" placeholder="по желанию"/><br/><br/>
+
+    <button type="submit">Обработать</button>
 </form>
 
 <div th:if="${result}" th:text="${result}" style="color:green"></div>

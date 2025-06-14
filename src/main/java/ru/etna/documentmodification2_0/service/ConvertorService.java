@@ -21,6 +21,8 @@ import java.util.UUID;
 @Service
 public class ConvertorService {
     private  static Logger logger = LoggerFactory.getLogger(ConvertorService.class);
+
+
     public void convertorDocToPdf(String docPath, String pdfPath) throws OfficeException {
         File inputFile = new File(docPath);
 
@@ -29,7 +31,8 @@ public class ConvertorService {
             return;
         }
         String name = UUID.randomUUID() + ".pdf";
-        File outputFile = new File(pdfPath + name);
+        File outputFolder = new File(pdfPath);
+        File outputFile = new File(outputFolder,name);
 
         // Проверка существования входного файла
         if (!inputFile.exists()) {
@@ -108,9 +111,17 @@ public class ConvertorService {
 
     // Соединение всех pdf в папке в один pdf файл
     public void mergePDFs(List<String> inputFiles, String outputFile) throws IOException {
+        if(inputFiles.isEmpty()){
+            logger.error("Нет PDF-файлов в указанной папке");
+            throw new IllegalArgumentException("Нет PDF-файлов в указанной папке");
+        }
+
+
+
         PDFMergerUtility merger = new PDFMergerUtility();
         File folder = new File(outputFile);
         if (!folder.exists() && !folder.mkdirs()) {
+            logger.error("Не могу создать папку: " + folder.getAbsolutePath());
             throw new IOException("Не могу создать папку: " + folder.getAbsolutePath());
         }
         String uniqueFileName = "merged_output_" + System.currentTimeMillis() + ".pdf";

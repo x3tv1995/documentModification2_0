@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.List;
 
 @Service
@@ -23,7 +24,7 @@ public class StartupManagerService {
     public void enterDatabase(String pathExcel, String docPath, String pdfPath,
                               String lastName, String data, String patternFirst,
                               String patterDate, int sizeText, String patternSpace,
-                              String numberSearch, String patternNumber, String replaceNumber) throws OfficeException {
+                              String numberSearch, String patternNumber, String replaceNumber) throws OfficeException, FileNotFoundException {
 
 
         List<String> arr = numberProductionService.numberProductionFromExcelInArray(pathExcel, 0, 0);
@@ -68,7 +69,7 @@ public class StartupManagerService {
     }
 
     public void enterDatabase(String pathExcel, String docPath, String pdfPath,
-                              int sizeText, String numberSearch, String patternNumber, String replaceNumber) throws OfficeException {
+                              int sizeText, String numberSearch, String patternNumber, String replaceNumber) throws OfficeException, FileNotFoundException {
         int count = 0;
         List<String> arr = numberProductionService.numberProductionFromExcelInArray(pathExcel, 0, 0);
         if (count == 0) {

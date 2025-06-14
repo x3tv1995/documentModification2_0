@@ -1,12 +1,12 @@
 package ru.etna.documentmodification2_0.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 import ru.etna.documentmodification2_0.dto.DocumentFormDTO;
 import ru.etna.documentmodification2_0.service.DocumentService;
 
@@ -27,11 +27,11 @@ public class DocumentController {
         try {
             documentService.process(documentFormDTO);
 
-            model.addAttribute("result", "PDF создан по пути: " + documentFormDTO.getPathDirectory() + "/merged_output.pdf");
+            model.addAttribute("result", "PDF создан по пути: " + documentFormDTO.getPathDirectory() );
         } catch (Exception e) {
             model.addAttribute("error", "Ошибка: " + e.getMessage());
         }
-        model.addAttribute("form", new DocumentFormDTO());
+        model.addAttribute("form", documentFormDTO);
         return "index";
     }
 

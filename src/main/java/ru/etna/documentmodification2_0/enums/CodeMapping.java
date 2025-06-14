@@ -132,8 +132,8 @@ public enum CodeMapping {
     BRPP22_PATTERN_REPLACE_NUMBER("заводской\\s*№\\s*[A-Za-z0-9]{9}",12),
 
     BRPP60_PATTERN_FIRST("Представитель ОТК                             ", 12),
-    BRPP60_PATTERN_DATE("           _______", 12),
-    BRPP60_PATTERN_SPACEANDSIZEWORD("      ", 12),
+    BRPP60_PATTERN_DATE("                _______", 12),
+    BRPP60_PATTERN_SPACEANDSIZEWORD("             ", 12),
     BRPP60_PATTERN_NUMBER_SEARCH("заводской\\s*№\\s*___*",12),
     BRPP60_PATTERN_NUMBER("заводской № ",12),
     BRPP60_PATTERN_REPLACE_NUMBER("заводской\\s*№\\s*[A-Za-z0-9]{9}",12);

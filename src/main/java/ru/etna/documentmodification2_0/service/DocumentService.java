@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import ru.etna.documentmodification2_0.dto.DocumentFormDTO;
 
 
+import java.io.File;
+import java.nio.file.Files;
 import java.util.List;
 
 @Service
@@ -16,14 +18,29 @@ public class DocumentService {
 
 
     public void process(DocumentFormDTO documentFormDTO) throws Exception {
-        String nameEquipment = filterEquipmentService.filterBybnshi(documentFormDTO.getPathExcel());
-        filterEquipmentService.filterByName(nameEquipment, documentFormDTO.getPathExcel(), documentFormDTO.getDocPath(),
-                documentFormDTO.getPathDirectory(), documentFormDTO.getLastName(), documentFormDTO.getData());
+        File tempDocx = Files.createTempFile("docx-", ".docx").toFile();
+        documentFormDTO.getDocPath().transferTo(tempDocx);
+        String docPath = tempDocx.getAbsolutePath();
 
+        File tempExel = Files.createTempFile("xlsx-", ".xlsx").toFile();
+        documentFormDTO.getPathExcel().transferTo(tempExel);
+        String pathExcel = tempExel.getAbsolutePath();
+
+
+        String key = filterEquipmentService.filterBybnshi(pathExcel);
+        filterEquipmentService.filterByName(
+                key,
+                pathExcel,
+                docPath,
+                documentFormDTO.getPathDirectory(),
+                documentFormDTO.getLastName(),
+                documentFormDTO.getData()
+        );
 
 
     }
-    public  void mergePdf (String folder) throws Exception {
+
+    public void mergePdf(String folder) throws Exception {
         if (folder != null && !folder.isEmpty()) {
             List<String> listAllPdfName = scannerFileService.arrayPathAbsolute(folder);
             convertorService.mergePDFs(listAllPdfName, folder);
