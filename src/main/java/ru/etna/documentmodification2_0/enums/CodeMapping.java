@@ -69,9 +69,9 @@ public enum CodeMapping {
 
 
 
-    ORT_PATTERN_FIRST(" Представитель ОТК   _______________             ", 10),
-    ORT_PATTERN_DATE("                   _____", 10),
-    ORT_PATTERN_SPACEANDSIZEWORD("                     ", 10),
+    ORT_PATTERN_FIRST("  Представитель ОТК   _______________               ", 10),
+    ORT_PATTERN_DATE("              ______", 10),
+    ORT_PATTERN_SPACEANDSIZEWORD("             ", 10),
     ORT_PATTERN_NUMBER_SEARCH("\\s*заводской\\s*№\\s*_+\\s*",10),
     ORT_PATTERN_NUMBER("заводской № ",10),
     ORT_PATTERN_REPLACE_NUMBER("\\s*заводской\\s*№\\s*[A-Za-z0-9]{9}",10),

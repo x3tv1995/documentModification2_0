@@ -1,10 +1,13 @@
 package ru.etna.documentmodification2_0.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
-import lombok.NonNull;
-import org.springframework.web.multipart.MultipartFile;
 
+import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
+/***
+ * Автор: Антон Долгов
+ * Дата создания 16.06.2025
+ * телеграмм @x3tv1995
+ */
 @Data
 public class DocumentFormDTO {
     private String pathDirectory;// путь до папки где будем сохранять pdf файлы

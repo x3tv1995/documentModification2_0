@@ -13,7 +13,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
+/***
+ * Автор: Антон Долгов
+ * Дата создания 16.06.2025
+ * телеграмм @x3tv1995
+ */
 @Service
 public class NumberProductionService {
     private static final Logger log = LoggerFactory.getLogger(NumberProductionService.class);

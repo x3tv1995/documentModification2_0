@@ -7,6 +7,12 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+/***
+ * Автор: Антон Долгов
+ * Дата создания 16.06.2025
+ * телеграмм @x3tv1995
+ */
 @Service
 public class ScannerFileService {
     private static final Logger log = LoggerFactory.getLogger(ScannerFileService.class);

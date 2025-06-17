@@ -5,6 +5,7 @@ import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.FileInputStream;
@@ -13,13 +14,27 @@ import java.io.IOException;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+/***
+ * Автор: Антон Долгов
+ * Дата создания 16.06.2025
+ * телеграмм @x3tv1995
+ */
 @Service
 public class DocxUpdateTextService {
+    @Autowired
+    DocumentCacheService documentCacheService;
+
+
     private  static Logger logger = LoggerFactory.getLogger(DocxUpdateTextService.class);
     public  void replaceWordInFile(String docPath, String number, String lastName, String data, String patternFirst,
                                          String patternSpace, int sizeText, String numberSearch, String patternNumber) {
-        try (FileInputStream fis = new FileInputStream(docPath);
-             XWPFDocument document = new XWPFDocument(fis)) {
+//        try (FileInputStream fis = new FileInputStream(docPath);
+//             XWPFDocument document = new XWPFDocument(fis)) {
+        try {
+
+            documentCacheService.templateLoad(docPath);
+            XWPFDocument document = documentCacheService.getCachedDocTemplate();
             boolean otkReplaced = false;
             boolean numberReplaced = false;
             for (XWPFParagraph paragraph : document.getParagraphs()) {
@@ -99,8 +114,12 @@ public class DocxUpdateTextService {
 
     public  void replaceWordInFileOnlyNumber(String docPath, String number,
                                                    int sizeText, String numberSearch, String patternNumber) {
-        try (FileInputStream fis = new FileInputStream(docPath);
-             XWPFDocument document = new XWPFDocument(fis)) {
+//        try (FileInputStream fis = new FileInputStream(docPath);
+//             XWPFDocument document = new XWPFDocument(fis)) {
+        try {
+
+            documentCacheService.templateLoad(docPath);
+            XWPFDocument document = documentCacheService.getCachedDocTemplate();
             boolean numberReplaced = false;
             for (XWPFParagraph paragraph : document.getParagraphs()) {
                 List<XWPFRun> runs = paragraph.getRuns();
@@ -155,8 +174,12 @@ public class DocxUpdateTextService {
     public  void replaceWordInFile(String docPath, String number, int sizeText, String replaceNumber, String patternNumber) {
         logger.info("Зашёл для работы");
 
-        try (FileInputStream fis = new FileInputStream(docPath);
-             XWPFDocument document = new XWPFDocument(fis)) {
+//        try (FileInputStream fis = new FileInputStream(docPath);
+//             XWPFDocument document = new XWPFDocument(fis)) {
+        try {
+
+            documentCacheService.templateLoad(docPath);
+            XWPFDocument document = documentCacheService.getCachedDocTemplate();
             boolean numberReplaced = false;
             for (XWPFParagraph paragraph : document.getParagraphs()) {
                 if (numberReplaced) break;
@@ -210,8 +233,12 @@ public class DocxUpdateTextService {
     public  void replaceWordInFile(String docPath, String number, String lastName,
                                          String patternFirst, String patterDate, int sizeText,
                                          String numberSearch, String patternNumber) {
-        try (FileInputStream fis = new FileInputStream(docPath);
-             XWPFDocument document = new XWPFDocument(fis)) {
+//        try (FileInputStream fis = new FileInputStream(docPath);
+//             XWPFDocument document = new XWPFDocument(fis)) {
+        try {
+
+            documentCacheService.templateLoad(docPath);
+            XWPFDocument document = documentCacheService.getCachedDocTemplate();
             boolean otkReplaced = false;
             boolean numberReplaced = false;
             for (XWPFParagraph paragraph : document.getParagraphs()) {

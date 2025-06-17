@@ -5,11 +5,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
-
+/***
+ * Автор: Антон Долгов
+ * Дата создания 16.06.2025
+ * телеграмм @x3tv1995
+ */
 @Service
 public class StartupManagerService {
     @Autowired
@@ -24,11 +29,11 @@ public class StartupManagerService {
     public void enterDatabase(String pathExcel, String docPath, String pdfPath,
                               String lastName, String data, String patternFirst,
                               String patterDate, int sizeText, String patternSpace,
-                              String numberSearch, String patternNumber, String replaceNumber) throws OfficeException, FileNotFoundException {
+                              String numberSearch, String patternNumber, String replaceNumber) throws Exception {
 
 
         List<String> arr = numberProductionService.numberProductionFromExcelInArray(pathExcel, 0, 0);
-        File docFile = new File(docPath);
+        File docFile = new File(String.valueOf(docPath));
         if (!docFile.exists()) {
             log.error("Ошибка: Файл input.docx не найден по пути: " + docPath);
             return;
@@ -40,14 +45,14 @@ public class StartupManagerService {
 
             for (String number : arr) {
                 if (count == 0) {
-                    docxUpdateTextService.replaceWordInFile(docPath, number, lastName, data,
+                    docxUpdateTextService.replaceWordInFile(String.valueOf(docPath), number, lastName, data,
                             patternFirst, patternSpace, sizeText, numberSearch, patternNumber);
 
 
                     convertorService.convertorDocToPdf(docPath, pdfPath);
                     count++;
                 } else {
-                    docxUpdateTextService.replaceWordInFile(docPath, number, sizeText, replaceNumber, patternNumber);
+                    docxUpdateTextService.replaceWordInFile(String.valueOf(docPath), number, sizeText, replaceNumber, patternNumber);
                     convertorService.convertorDocToPdf(docPath, pdfPath);
                 }
             }
@@ -55,12 +60,12 @@ public class StartupManagerService {
         } else {
             for (String number : arr) {
                 if (count == 0) {
-                    docxUpdateTextService.replaceWordInFile(docPath, number, lastName, data,
+                    docxUpdateTextService.replaceWordInFile(String.valueOf(docPath), number, lastName, data,
                             patternFirst, patterDate, sizeText, numberSearch, patternNumber);
                     convertorService.convertorDocToPdf(docPath, pdfPath);
                     count++;
                 } else {
-                    docxUpdateTextService.replaceWordInFile(docPath, number, sizeText, replaceNumber, patternNumber);
+                    docxUpdateTextService.replaceWordInFile(String.valueOf(docPath), number, sizeText, replaceNumber, patternNumber);
                     convertorService.convertorDocToPdf(docPath, pdfPath);
                 }
             }
@@ -69,18 +74,18 @@ public class StartupManagerService {
     }
 
     public void enterDatabase(String pathExcel, String docPath, String pdfPath,
-                              int sizeText, String numberSearch, String patternNumber, String replaceNumber) throws OfficeException, FileNotFoundException {
+                              int sizeText, String numberSearch, String patternNumber, String replaceNumber) throws Exception {
         int count = 0;
         List<String> arr = numberProductionService.numberProductionFromExcelInArray(pathExcel, 0, 0);
         if (count == 0) {
             for (String number : arr) {
-                docxUpdateTextService.replaceWordInFileOnlyNumber(docPath, number, sizeText, numberSearch, patternNumber);
+                docxUpdateTextService.replaceWordInFileOnlyNumber(String.valueOf(docPath), number, sizeText, numberSearch, patternNumber);
                 convertorService.convertorDocToPdf(docPath, pdfPath);
                 count++;
             }
         } else {
             for (String number : arr) {
-                docxUpdateTextService.replaceWordInFile(docPath, number, sizeText, replaceNumber, patternNumber);
+                docxUpdateTextService.replaceWordInFile(String.valueOf(docPath), number, sizeText, replaceNumber, patternNumber);
                 convertorService.convertorDocToPdf(docPath, pdfPath);
             }
         }

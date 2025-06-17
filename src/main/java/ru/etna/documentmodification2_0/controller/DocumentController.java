@@ -9,7 +9,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.etna.documentmodification2_0.dto.DocumentFormDTO;
 import ru.etna.documentmodification2_0.service.DocumentService;
-
+/***
+ * Автор: Антон Долгов
+ * Дата создания 16.06.2025
+ * телеграмм @x3tv1995
+ */
 @Controller
 @RequiredArgsConstructor
 public class DocumentController {
@@ -45,5 +49,10 @@ public class DocumentController {
         }
         model.addAttribute("form", new DocumentFormDTO());
         return "index";
+    }
+
+    @GetMapping("/process")
+    public String handleGetProcess() {
+        return "redirect:/"; // перенаправляем обратно на главную
     }
 }

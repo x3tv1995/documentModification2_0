@@ -1,6 +1,8 @@
 package ru.etna.documentmodification2_0.service;
 
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
+//import org.docx4j.Docx4J;
+//import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.jodconverter.core.DocumentConverter;
 import org.jodconverter.core.document.DefaultDocumentFormatRegistry;
 import org.jodconverter.core.document.DocumentFormat;
@@ -11,19 +13,46 @@ import org.jodconverter.local.office.LocalOfficeManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.awt.*;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.UUID;
+
+/***
+ * Автор: Антон Долгов
+ * Дата создания 16.06.2025
+ * телеграмм @x3tv1995
+ */
+
 @Service
 public class ConvertorService {
     private  static Logger logger = LoggerFactory.getLogger(ConvertorService.class);
 
-
-    public void convertorDocToPdf(String docPath, String pdfPath) throws OfficeException {
+//    public void convertorDocToPdf(String inputPath, String outputPath) throws Exception {
+//        File source = new File(inputPath);
+//        if (!source.exists()) {
+//            throw new IllegalArgumentException("Файл не найден по указанному пути");
+//        }
+//        File temp = Files.createTempFile("docx-", ".tmp").toFile();
+//
+//        // Создаём копию файла
+//        Files.copy(source.toPath(), temp.toPath(), StandardCopyOption.REPLACE_EXISTING);
+//
+//        try (FileInputStream fis = new FileInputStream(temp)) {
+//            WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.load(fis);
+//
+//            try (FileOutputStream fos = new FileOutputStream(outputPath)) {
+//                Docx4J.toPDF(wordMLPackage, fos);
+//            }
+//        } finally {
+//            Files.deleteIfExists(temp.toPath());
+//        }
+//    }
+    public void convertorDocToPdf(String docPath, String pdfPath) throws OfficeException, FileNotFoundException {
         File inputFile = new File(docPath);
 
         if (pdfPath == null && pdfPath.isEmpty()) {
@@ -40,11 +69,13 @@ public class ConvertorService {
             return;
         }
 
-        File officeHome = new File("C:/Program Files/LibreOffice");
+     File officeHome = new File("C:/Program Files/LibreOffice");
+//        File officeHome = new File("C:/Program Files (x86)/LibreOffice");
         if (!officeHome.exists() || !officeHome.isDirectory()) {
             logger.error("Ошибка: Путь к LibreOffice не найден или не является каталогом: " + officeHome.getAbsolutePath());
             logger.error("Проверьте, установлена ли LibreOffice и правильно ли указан путь.");
-            return;
+            throw new FileNotFoundException("LibreOffice не найден по пути: " + officeHome);
+//            return;
         }
 
         LocalOfficeManager officeManager = LocalOfficeManager.builder()
@@ -115,9 +146,6 @@ public class ConvertorService {
             logger.error("Нет PDF-файлов в указанной папке");
             throw new IllegalArgumentException("Нет PDF-файлов в указанной папке");
         }
-
-
-
         PDFMergerUtility merger = new PDFMergerUtility();
         File folder = new File(outputFile);
         if (!folder.exists() && !folder.mkdirs()) {
