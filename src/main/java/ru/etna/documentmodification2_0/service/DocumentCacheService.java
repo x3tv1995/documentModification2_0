@@ -4,7 +4,6 @@ import lombok.Data;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 @Data
@@ -14,7 +13,7 @@ public class DocumentCacheService {
     private  String  templatePath;
     public void  templateLoad(String path) throws IOException {
         if(cachedDocTemplate == null || !path.equals(templatePath)) {
-                 try (FileInputStream fis = new FileInputStream(new File(path))) {
+                 try (FileInputStream fis = new FileInputStream(path)) {
                       this.cachedDocTemplate = new XWPFDocument(fis);
                  }
                  this.templatePath = path;

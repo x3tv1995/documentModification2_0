@@ -20,7 +20,7 @@ public class ScannerFileService {
     public   List<String> arrayPathAbsolute(String folderPath) {
         File folder = new File(folderPath);
         File[] listOfFiles = folder.listFiles();
-        List<String> listFilesPdfAbsolute = new ArrayList<String>();
+        List<String> listFilesPdfAbsolute = new ArrayList<>();
         if (folder.isDirectory() && folder.exists()) {
             if (listOfFiles != null) {
                 for (File file : listOfFiles) {

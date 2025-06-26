@@ -1,51 +1,82 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
-
 <head>
     <meta charset="UTF-8">
     <title>Автозаполнение документов</title>
-
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 
 <body>
+
 <h2>1. Изменение и конвертация Word</h2>
+<form th:action="@{/processPassports}" method="post" th:object="${formPassports}" enctype="multipart/form-data">
+    <span class="bold-text">Выберите паспорт "шаблон"(.docx):</span><br>
+    <input type="file" th:field="*{docPath}" accept=".docx"/><br/><br/>
 
-<form th:action="@{/process}" method="post" th:object="${form}" enctype="multipart/form-data">
+    <span class="bold-text">Выберите таблицу с номерами(.xlsx):</span><br>
+    <input type="file" th:field="*{pathExcel}" accept=".xlsx"/><br/><br/>
 
-    <label>Выберите паспорт "шаблон"(.docx):</label><br/>
-    <input type="file" th:field="*{docPath}" accept=".docx" /><br/><br/>
-
-    <label>Выберите таблицу с номерами(.xlsx):</label><br/>
-    <input type="file" th:field="*{pathExcel}" accept=".xlsx" /><br/><br/>
-
-    <label>Папка для PDF:</label><br/>
+    <span class="bold-text">Папка для PDF:</span><br>
     <input type="text" th:field="*{pathDirectory}" placeholder="C:\Output\" style="width: 250px;"/><br/><br/>
 
-    <label>Фамилия и инициалы:</label><br/>
-    <input type="text" th:field="*{lastName}"  /><br/><br/>
+    <span class="bold-text">Фамилия и инициалы:</span><br>
+    <input type="text" th:field="*{lastName}"/><br/><br/>
 
-    <label>Дата:</label><br/>
+    <span class="bold-text">Дата:</span><br>
     <input type="text" th:field="*{data}" placeholder="по желанию"/><br/><br/>
 
     <button type="submit">Обработать</button>
 </form>
 
-<div th:if="${result}" th:text="${result}" style="color:green"></div>
-<div th:if="${error}" th:text="${error}" style="color:red"></div>
+<div th:if="${resultPassports}" th:text="${resultPassports}" class="message bold-message success-message"></div>
+<div th:if="${errorPassports}" th:text="${errorPassports}" class="message bold-message error-message"></div>
 
 
+<div>
+    <h2>2. Объединить все PDF в один</h2>
+    <form action="/mergePassports" method="post">
+        <span class="bold-text">Путь к папке с PDF:</span>
+        <input type="text" name="pdfInputFolder" placeholder="C:\Output\"/>
+        <button type="submit">Склеить PDF</button>
+    </form>
 
-<h2>2. Объединить все PDF в один</h2>
-<form action="/merge" method="post">
-    <label>Путь к папке с PDF:</label>
-    <input type="text" name="pdfInputFolder"  placeholder="C:\Output\"/>
-    <button type="submit">Склеить PDF</button>
+    <div th:if="${mergeResultPassports}" th:text="${mergeResultPassports}" class="message bold-message success-message"></div>
+    <div th:if="${mergeErrorPassports}" th:text="${mergeErrorPassports}" class="message bold-message error-message"></div>
+</div>
+
+
+<h2>3. Изменение ПСИ</h2>
+<form th:action="@{/processPsi}" method="post" th:object="${formPsi}" enctype="multipart/form-data">
+    <span class="bold-text">Выберите ПСИ "шаблон"(.docx):</span><br>
+    <input type="file" th:field="*{docPath}" accept=".docx"/><br/><br/>
+
+    <span class="bold-text">Выберите таблицу с номерами(.xlsx):</span><br>
+    <input type="file" th:field="*{pathExcel}" accept=".xlsx"/><br/><br/>
+
+    <span class="bold-text">Папка для PDF:</span><br>
+    <input type="text" th:field="*{pathDirectory}" placeholder="C:\Output\" style="width: 250px;"/><br/><br/>
+
+    <span class="bold-text">Фамилия и инициалы:</span><br>
+    <input type="text" th:field="*{lastName}"/><br/><br/>
+
+    <button type="submit">Обработать</button>
 </form>
 
-<div th:if="${mergeResult}" th:text="${mergeResult}" style="color:green"></div>
-<div th:if="${mergeError}" th:text="${mergeError}" style="color:red"></div>
+<div th:if="${resultPsi}" th:text="${resultPsi}" class="message bold-message success-message"></div>
+<div th:if="${errorPsi}" th:text="${errorPsi}" class="message bold-message error-message"></div>
+
+
+<div>
+    <h2>4. Объединить все ПСИ.pdf в один</h2>
+    <form action="/mergePsi" method="post">
+        <span class="bold-text">Путь к папке с Psi.pdf:</span>
+        <input type="text" name="docxInputFolder" placeholder="C:\Output\"/>
+        <button type="submit">Склеить PDF</button>
+    </form>
+
+    <div th:if="${mergeResultPsi}" th:text="${mergeResultPsi}" class="message bold-message success-message"></div>
+    <div th:if="${mergeErrorPsi}" th:text="${mergeErrorPsi}" class="message bold-message error-message"></div>
+</div>
 
 </body>
 </html>

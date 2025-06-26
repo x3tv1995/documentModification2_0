@@ -1,6 +1,5 @@
 package ru.etna.documentmodification2_0.controller;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -8,7 +7,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.etna.documentmodification2_0.dto.DocumentFormDTO;
+import ru.etna.documentmodification2_0.dto.PsiFormDto;
 import ru.etna.documentmodification2_0.service.DocumentService;
+
+
 /***
  * Автор: Антон Долгов
  * Дата создания 16.06.2025
@@ -19,40 +21,77 @@ import ru.etna.documentmodification2_0.service.DocumentService;
 public class DocumentController {
     private final DocumentService documentService;
 
+
     @GetMapping("/")
     public String showForm(Model model) {
-        model.addAttribute("form", new DocumentFormDTO());
+        model.addAttribute("formPassports", new DocumentFormDTO());
+        model.addAttribute("formPsi", new PsiFormDto());
         return "index";
     }
 
-    @PostMapping("/process")
+    @PostMapping("/processPassports")
     public String process(DocumentFormDTO documentFormDTO, Model model) {
 
         try {
             documentService.process(documentFormDTO);
 
-            model.addAttribute("result", "PDF создан по пути: " + documentFormDTO.getPathDirectory() );
+            model.addAttribute("resultPassports", "PDF создан по пути: " + documentFormDTO.getPathDirectory());
         } catch (Exception e) {
-            model.addAttribute("error", "Ошибка: " + e.getMessage());
+            model.addAttribute("errorPassports", "Ошибка: " + e.getMessage());
         }
-        model.addAttribute("form", documentFormDTO);
+        model.addAttribute("formPassports", new DocumentFormDTO());
+        model.addAttribute("formPsi", new PsiFormDto());
         return "index";
     }
 
-    @PostMapping("/merge")
+    @PostMapping("/processPsi")
+    public String processPsi(PsiFormDto psiFormDto, Model model) {
+
+        try {
+            documentService.processForDocx(psiFormDto);
+
+            model.addAttribute("resultPsi", "Документы созданы по пути: " + psiFormDto.getPathDirectory());
+        } catch (Exception e) {
+            model.addAttribute("errorPsi", "Ошибка: " + e.getMessage());
+        }
+        model.addAttribute("formPsi", new PsiFormDto());
+        model.addAttribute("formPassports", new DocumentFormDTO());
+
+        return "index";
+    }
+
+    @PostMapping("/mergePsi")
+    public String mergeDocx(@RequestParam String docxInputFolder, Model model) {
+
+        try {
+
+            documentService.mergePdfForPsi(docxInputFolder);
+            model.addAttribute("mergeResultPsi", "Все psi.pdf объединены ");
+        } catch (Exception e) {
+            model.addAttribute("mergeErrorPsi", "Ошибка слияния: " + e.getMessage());
+        }
+        model.addAttribute("formPsi", new PsiFormDto());
+        model.addAttribute("formPassports", new DocumentFormDTO());
+
+        return "index";
+    }
+
+
+    @PostMapping("/mergePassports")
     public String mergePdfs(@RequestParam String pdfInputFolder, Model model) {
         try {
             documentService.mergePdf(pdfInputFolder);
-            model.addAttribute("mergeResult", "Все PDF объединены ");
+            model.addAttribute("mergeResultPassports", "Все PDF объединены ");
         } catch (Exception e) {
-            model.addAttribute("mergeError", "Ошибка слияния: " + e.getMessage());
+            model.addAttribute("mergeErrorPassports", "Ошибка слияния: " + e.getMessage());
         }
-        model.addAttribute("form", new DocumentFormDTO());
+        model.addAttribute("formPassports", new DocumentFormDTO());
+        model.addAttribute("formPsi", new PsiFormDto());
         return "index";
     }
 
-    @GetMapping("/process")
+    @GetMapping("/processPassports")
     public String handleGetProcess() {
-        return "redirect:/"; // перенаправляем обратно на главную
+        return "redirect:/";
     }
 }
