@@ -25,17 +25,17 @@ public enum CodeMapping {
 
     BVPP_02_PATTERN_FIRST("Представитель ОТК   _______________   ", 10),
     BVPP_02_PATTERN_DATE("                     __________", 10),
-    BVPP_02_SPACEANDSIZEWORD("                       ", 10),
-    BVPP_02_NUMBER_SEARCH("\\s*заводской\\s*№\\s*_+\\s*", 10),
-    BVPP_02_NUMBER("заводской № ", 10),
+    BVPP_02_PATTERN_SPACEANDSIZEWORD("                       ", 10),
+    BVPP_02_PATTERN_NUMBER_SEARCH("\\s*заводской\\s*№\\s*_+\\s*", 10),
+    BVPP_02_PATTERN_NUMBER("заводской № ", 10),
     BVPP_02_PATTERN_REPLACE_NUMBER("\\s*заводской\\s*№\\s*[A-Za-z0-9]{9}\\s*", 10),
 
 
     MIT_PATTERN_FIRST("     Представитель ОТК _______________            ", 10),
     MIT_PATTERN_DATE("               ______", 10),
-    MIT_SPACEANDSIZEWORD("           ", 10),
-    MIT_NUMBER_SEARCH("\\s*заводской\\s*№\\s*_+\\s*", 10),
-    MIT_NUMBER(" заводской № ", 10),
+    MIT_PATTERN_SPACEANDSIZEWORD("           ", 10),
+    MIT_PATTERN_NUMBER_SEARCH("\\s*заводской\\s*№\\s*_+\\s*", 10),
+    MIT_PATTERN_NUMBER(" заводской № ", 10),
     MIT_PATTERN_REPLACE_NUMBER("\\s*заводской\\s*№\\s*[A-Za-z0-9]{9}", 10),
 
 
@@ -56,9 +56,9 @@ public enum CodeMapping {
 
     YPP_PATTERN_FIRST("Представитель ОТК   __________________      ", 10),
     YPP_PATTERN_DATE("                   _______", 10),
-    YPP_SPACEANDSIZEWORD("          ", 10),
-    YPP_NUMBER_SEARCH("\\s*заводской\\s*№\\s*_+\\s*", 10),
-    YPP_NUMBER(" заводской № ", 10),
+    YPP_PATTERN_SPACEANDSIZEWORD("          ", 10),
+    YPP_PATTERN_NUMBER_SEARCH("\\s*заводской\\s*№\\s*_+\\s*", 10),
+    YPP_PATTERN_NUMBER(" заводской № ", 10),
     YPP_PATTERN_REPLACE_NUMBER("\\s*заводской\\s*№\\s*[A-Za-z0-9]{9}", 10),
 
     PSI_PATTERN_FIRST("Представитель ОТК   __________________                     ", 10),
@@ -67,9 +67,9 @@ public enum CodeMapping {
 
     YPP_18_PATTERN_FIRST("Представитель ОТК   _______________   ", 10),
     YPP_18_PATTERN_DATE("                     ______", 10),
-    YPP_18_SPACEANDSIZEWORD("            ", 10),
-    YPP_18_NUMBER_SEARCH("\\s*заводской\\s*№\\s*_+\\s*", 10),
-    YPP_18_NUMBER("заводской № ", 10),
+    YPP_18_PATTERN_SPACEANDSIZEWORD("            ", 10),
+    YPP_18_PATTERN_NUMBER_SEARCH("\\s*заводской\\s*№\\s*_+\\s*", 10),
+    YPP_18_PATTERN_NUMBER("заводской № ", 10),
     YPP_18_PATTERN_REPLACE_NUMBER("\\s*заводской\\s*№\\s*[A-Za-z0-9]{9}", 10),
 
 

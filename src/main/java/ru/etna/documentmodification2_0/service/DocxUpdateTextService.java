@@ -5,8 +5,8 @@ import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.etna.documentmodification2_0.dto.DocumentReplaceRequestDTO;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -23,12 +23,19 @@ import java.util.regex.Pattern;
 @Service
 public class DocxUpdateTextService {
     private final Logger logger = LoggerFactory.getLogger(DocxUpdateTextService.class);
-    @Autowired
-    DocumentCacheService documentCacheService;
 
 
-    public void replaceWordInFile(String docPath, String number, String lastName, String data, String patternFirst,
-                                  String patternSpace, int sizeText, String numberSearch, String patternNumber) {
+    public void replaceWordInFile(DocumentReplaceRequestDTO documentReplaceRequestDTO, String number) {
+        String docPath = documentReplaceRequestDTO.getDocPath();
+        String patternNumber = documentReplaceRequestDTO.getPatternNumber();
+        String numberSearch = documentReplaceRequestDTO.getNumberSearch();
+        int sizeText = documentReplaceRequestDTO.getFontSize();
+        String patternFirst = documentReplaceRequestDTO.getPatternFirst();
+        String lastName = documentReplaceRequestDTO.getLastName();
+        String patternSpace = documentReplaceRequestDTO.getPatternSpace();
+        String data = documentReplaceRequestDTO.getData();
+
+
         try (FileInputStream fis = new FileInputStream(docPath);
              XWPFDocument document = new XWPFDocument(fis)) {
 //        try {
@@ -59,54 +66,20 @@ public class DocxUpdateTextService {
                 logger.info("Заводской №: " + numberReplaced + " == True значит номер поменял ");
                 logger.info(fullText);
                 if (!numberReplaced) {
-
-                    Pattern pattern = Pattern.compile(numberSearch);
-                    Matcher matcher = pattern.matcher(fullText);
-
-                    if (matcher.find()) {
-                        String newText = matcher.replaceAll(patternNumber + number + " ");
-                        logger.info("Нашёл заводской номер и стараюсь заменить: " + newText);
-                        while (!runs.isEmpty()) {
-                            paragraph.removeRun(0);
-                            runs = paragraph.getRuns(); // Обновляем список runs
-                        }
-                        XWPFRun newRun = paragraph.createRun();
-                        newRun.setText(newText, 0);
-                        newRun.setFontSize(sizeText);
-                        logger.info("ЗАМЕНИЛ!!!!");
-                        numberReplaced = true;
-
-                    }
+                    String newText = patternNumber + number + " ";
+                    replaceInParagraph(paragraph, fullText, numberSearch, newText, sizeText);
+                    logger.info("ЗАМЕНИЛ!!!!");
                 }
+
                 logger.info("Представитель ОТК: " + numberReplaced + " == True значит номер поменял ");
                 if (!otkReplaced) {
                     String template = "Представитель ОТК\\s*_+\\s*_+\\s*_+";
-                    Pattern patternResearchOTK = Pattern.compile(template);
-                    Matcher matcherOTK = patternResearchOTK.matcher(fullText);
-
-                    if (matcherOTK.find()) {
-                        logger.info("ТУТ БУДЕТ ЗАМЕНА ВНИМАНИЕ!!!!");
-
-                        // Заменяю только найденный участок, сохраняя остальной текст
-                        String newText = matcherOTK.replaceAll(patternFirst + lastName + patternSpace + data);
-
-                        // удаляю все XWPFRun - ПЕРЕД созданием нового Run
-                        while (!runs.isEmpty()) {
-                            paragraph.removeRun(0);
-                            runs = paragraph.getRuns(); // Обновляем список runs
-                        }
-                        XWPFRun newRun = paragraph.createRun();
-                        newRun.setText(newText, 0);
-                        newRun.setFontSize(sizeText);
-                        logger.info("ЗАМЕНИЛ!!!!");
-                        otkReplaced = true;
-                    }
+                    String replacement = patternFirst + lastName + patternSpace + data;
+                    otkReplaced = replaceInParagraph(paragraph, fullText, template, replacement, sizeText);
+                    logger.info("Представитель ОТК: {} == {}", lastName, otkReplaced ? "заменён" : "не найден");
                 }
 
-
             }
-
-
             try (FileOutputStream fos = new FileOutputStream(docPath)) {
                 document.write(fos);
             }
@@ -118,8 +91,11 @@ public class DocxUpdateTextService {
     }
 
 
-    public void replaceWordInFileOnlyNumber(String docPath, String number,
-                                            int sizeText, String numberSearch, String patternNumber) {
+    public void replaceWordInFileOnlyNumber(DocumentReplaceRequestDTO documentReplaceRequestDTO, String number) {
+        String docPath = documentReplaceRequestDTO.getDocPath();
+        String patternNumber = documentReplaceRequestDTO.getPatternNumber();
+        String numberSearch = documentReplaceRequestDTO.getNumberSearch();
+        int sizeText = documentReplaceRequestDTO.getFontSize();
         try (FileInputStream fis = new FileInputStream(docPath);
              XWPFDocument document = new XWPFDocument(fis)) {
 //        try {
@@ -132,9 +108,8 @@ public class DocxUpdateTextService {
                     break;
                 }
                 List<XWPFRun> runs = paragraph.getRuns();
-                StringBuilder paragraphText = new StringBuilder(); // Собираем текст параграфа
+                StringBuilder paragraphText = new StringBuilder();
 
-                // Собираем текст из всех XWPFRun
                 for (XWPFRun run : runs) {
                     String text = run.getText(0);
                     if (text != null) {
@@ -146,30 +121,11 @@ public class DocxUpdateTextService {
                 logger.info("Заводской №: " + numberReplaced + " == True значит номер поменял ");
                 logger.info(fullText);
                 if (!numberReplaced) {
-
-                    Pattern pattern = Pattern.compile(numberSearch);
-                    Matcher matcher = pattern.matcher(fullText);
-
-                    if (matcher.find()) {
-                        String newText = matcher.replaceAll(patternNumber + number + " ");
-                        logger.info("Нашёл заводской номер и стараюсь заменить: " + newText);
-                        while (!runs.isEmpty()) {
-                            paragraph.removeRun(0);
-                            runs = paragraph.getRuns(); // Обновляем список runs
-                        }
-                        XWPFRun newRun = paragraph.createRun();
-                        newRun.setText(newText, 0);
-                        newRun.setFontSize(sizeText);
-                        logger.info("ЗАМЕНИЛ!!!!");
-                        numberReplaced = true;
-
-                    }
+                    String newText = patternNumber + number + " ";
+                    replaceInParagraph(paragraph, fullText, numberSearch, newText, sizeText);
+                    logger.info("ЗАМЕНИЛ!!!!");
                 }
-
-
             }
-
-            // Сохраняем изменения
             try (FileOutputStream fos = new FileOutputStream(docPath)) {
                 document.write(fos);
             }
@@ -180,7 +136,11 @@ public class DocxUpdateTextService {
     }
 
 
-    public void replaceWordInFile(String docPath, String number, int sizeText, String replaceNumber, String patternNumber) {
+    public void replaceWordInFileReplay(DocumentReplaceRequestDTO documentReplaceRequestDTO, String number) {
+        String docPath = documentReplaceRequestDTO.getDocPath();
+        String patternNumber = documentReplaceRequestDTO.getPatternNumber();
+        int sizeText = documentReplaceRequestDTO.getFontSize();
+        String replaceNumber = documentReplaceRequestDTO.getReplaceNumber();
         logger.info("Зашёл для работы");
 
         try (FileInputStream fis = new FileInputStream(docPath);
@@ -195,7 +155,6 @@ public class DocxUpdateTextService {
                 List<XWPFRun> runs = paragraph.getRuns();
                 StringBuilder paragraphText = new StringBuilder(); // Собираем текст параграфа
 
-                // Собираем текст из всех XWPFRun
                 for (XWPFRun run : runs) {
                     String text = run.getText(0);
                     if (text != null) {
@@ -207,27 +166,12 @@ public class DocxUpdateTextService {
                 logger.info("Заводской №: " + numberReplaced + " == True значит номер поменял ");
                 logger.info(fullText);
 
-
-                Pattern pattern = Pattern.compile(replaceNumber);
-                Matcher matcher = pattern.matcher(fullText);
                 if (!numberReplaced) {
-                    if (matcher.find()) {
-                        String newText = matcher.replaceFirst(patternNumber + number);
-                        logger.info("Нашёл заводской номер и стараюсь заменить: " + newText);
-                        while (!runs.isEmpty()) {
-                            paragraph.removeRun(0);
-                            runs = paragraph.getRuns(); // Обновляем список runs
-                        }
-                        XWPFRun newRun = paragraph.createRun();
-                        newRun.setText(newText, 0);
-                        newRun.setFontSize(sizeText);
-                        logger.info("ЗАМЕНИЛ!!!!");
-                        numberReplaced = true;
-                    }
-
+                    String newText = patternNumber + number;
+                    replaceInParagraph(paragraph, fullText, replaceNumber, newText, sizeText);
+                    logger.info("ЗАМЕНИЛ!!!!");
                 }
             }
-
             try (FileOutputStream fos = new FileOutputStream(docPath)) {
                 document.write(fos);
             }
@@ -254,7 +198,6 @@ public class DocxUpdateTextService {
                 List<XWPFRun> runs = paragraph.getRuns();
                 if (runs.isEmpty()) continue;
 
-                // Собираем полный текст параграфа
                 StringBuilder fullTextBuilder = new StringBuilder();
                 for (XWPFRun run : runs) {
                     String text = run.getText(0);
@@ -320,9 +263,15 @@ public class DocxUpdateTextService {
     }
 
 
-    public void replaceWordInFile(String docPath, String number, String lastName,
-                                  String patternFirst, String patterDate, int sizeText,
-                                  String numberSearch, String patternNumber) {
+    public void replaceWordInFileNoDate(DocumentReplaceRequestDTO documentReplaceRequestDTO, String number) {
+        String docPath = documentReplaceRequestDTO.getDocPath();
+        String patternNumber = documentReplaceRequestDTO.getPatternNumber();
+        String numberSearch = documentReplaceRequestDTO.getNumberSearch();
+        int sizeText = documentReplaceRequestDTO.getFontSize();
+        String patternFirst = documentReplaceRequestDTO.getPatternFirst();
+        String lastName = documentReplaceRequestDTO.getLastName();
+        String patterDate = documentReplaceRequestDTO.getPatterDate();
+
         try (FileInputStream fis = new FileInputStream(docPath);
              XWPFDocument document = new XWPFDocument(fis)) {
 //        try {
@@ -338,7 +287,6 @@ public class DocxUpdateTextService {
                 List<XWPFRun> runs = paragraph.getRuns();
                 StringBuilder paragraphText = new StringBuilder(); // Собираем текст параграфа
 
-                // Собираем текст из всех XWPFRun
                 for (XWPFRun run : runs) {
                     String text = run.getText(0);
                     if (text != null) {
@@ -350,51 +298,20 @@ public class DocxUpdateTextService {
                 logger.info("Заводской №: " + numberReplaced + " == True значит номер поменял ");
                 logger.info(fullText);
                 if (!numberReplaced) {
-                    Pattern pattern = Pattern.compile(numberSearch);
-                    Matcher matcher = pattern.matcher(fullText);
-
-                    if (matcher.find()) {
-                        String newText = matcher.replaceAll(patternNumber + number + " ");
-                        logger.info("Нашёл заводской номер и стараюсь заменить: " + newText);
-                        while (!runs.isEmpty()) {
-                            paragraph.removeRun(0);
-                            runs = paragraph.getRuns(); // Обновляем список runs
-                        }
-                        XWPFRun newRun = paragraph.createRun();
-                        newRun.setText(newText, 0);
-                        newRun.setFontSize(sizeText);
-                        logger.info("ЗАМЕНИЛ!!!!");
-                        numberReplaced = true;
-                    }
+                    String newText = patternNumber + number + " ";
+                    replaceInParagraph(paragraph, fullText, numberSearch, newText, sizeText);
+                    logger.info("ЗАМЕНИЛ!!!!");
                 }
                 logger.info("Представитель ОТК: " + numberReplaced + " == True значит номер поменял ");
                 if (!otkReplaced) {
                     String template = "Представитель ОТК\\s*_+\\s*_+\\s*_+";
-                    Pattern patternResearchOTK = Pattern.compile(template);
-                    Matcher matcherOTK = patternResearchOTK.matcher(fullText);
-
-                    if (matcherOTK.find()) {
-                        logger.info("ТУТ БУДЕТ ЗАМЕНА ВНИМАНИЕ!!!!");
-
-                        String newText = matcherOTK.replaceAll(patternFirst + lastName + patterDate);
-
-
-                        while (!runs.isEmpty()) {
-                            paragraph.removeRun(0);
-                            runs = paragraph.getRuns();
-                        }
-                        XWPFRun newRun = paragraph.createRun();
-                        newRun.setText(newText, 0);
-                        newRun.setFontSize(sizeText);
-                        logger.info("ЗАМЕНИЛ!!!!");
-                        otkReplaced = true;
-                    }
+                    String replacement = patternFirst + lastName + patterDate;
+                    otkReplaced = replaceInParagraph(paragraph, fullText, template, replacement, sizeText);
+                    logger.info("Представитель ОТК: {} == {}", lastName, otkReplaced ? "заменён" : "не найден");
                 }
 
 
             }
-
-            // Сохраняем изменения
             try (FileOutputStream fos = new FileOutputStream(docPath)) {
                 document.write(fos);
             }
@@ -404,8 +321,8 @@ public class DocxUpdateTextService {
         }
     }
 
-    public void searchTitle( String patternFirst,
-                            String lastName, String patterDate, XWPFDocument document, int sizeText) {
+    public void searchTitleForPsi(String patternFirst,
+                                  String lastName, String patterDate, XWPFDocument document, int sizeText) {
         boolean otkReplaced = false;
         for (XWPFParagraph paragraph : document.getParagraphs()) {
             if (otkReplaced) {
@@ -413,9 +330,8 @@ public class DocxUpdateTextService {
             }
             List<XWPFRun> runs = paragraph.getRuns();
 
-            StringBuilder paragraphText = new StringBuilder(); // Собираем текст параграфа
+            StringBuilder paragraphText = new StringBuilder();
 
-            // Собираем текст из всех XWPFRun
             for (XWPFRun run : runs) {
                 String text = run.getText(0);
                 if (text != null) {
@@ -424,30 +340,35 @@ public class DocxUpdateTextService {
             }
 
             String fullText = paragraphText.toString();
-
             if (!otkReplaced) {
                 String template = "Представитель ОТК\\s*_+\\s*_+\\s*_+";
-                Pattern patternResearchOTK = Pattern.compile(template);
-                Matcher matcherOTK = patternResearchOTK.matcher(fullText);
-
-                if (matcherOTK.find()) {
-                    logger.info("ТУТ БУДЕТ ЗАМЕНА ВНИМАНИЕ!!!!");
-
-                    String newText = matcherOTK.replaceAll(patternFirst + lastName + patterDate);
-
-
-                    while (!runs.isEmpty()) {
-                        paragraph.removeRun(0);
-                        runs = paragraph.getRuns();
-                    }
-                    XWPFRun newRun = paragraph.createRun();
-                    newRun.setText(newText, 0);
-                    newRun.setFontSize(sizeText);
-                    logger.info("ЗАМЕНИЛ!!!!");
-                    otkReplaced = true;
-                }
+                String replacement = patternFirst + lastName + patterDate;
+                otkReplaced = replaceInParagraph(paragraph, fullText, template, replacement, sizeText);
+                logger.info("Представитель ОТК: {} == {}", lastName, otkReplaced ? "заменён" : "не найден");
             }
         }
+    }
+
+    //замена текста
+    private boolean replaceInParagraph(XWPFParagraph paragraph, String fullText,
+                                       String pattern, String replacement, int fontSize) {
+        Pattern p = Pattern.compile(pattern);
+        Matcher m = p.matcher(fullText);
+
+        if (m.find()) {
+            String newText = m.replaceAll(replacement);
+
+            while (!paragraph.getRuns().isEmpty()) {
+                paragraph.removeRun(0);
+            }
+
+            XWPFRun newRun = paragraph.createRun();
+            newRun.setText(newText, 0);
+            newRun.setFontSize(fontSize);
+
+            return true;
+        }
+        return false;
     }
 }
 

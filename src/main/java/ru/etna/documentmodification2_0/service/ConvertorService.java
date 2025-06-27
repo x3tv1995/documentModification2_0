@@ -18,6 +18,7 @@ import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /***
  * Автор: Антон Долгов
@@ -147,29 +148,6 @@ public class ConvertorService {
         }
     }
 
-    //конвертация из DOC формата в DOCX
-//    public  File convertDocToDocx(File docFile) throws IOException, OfficeException {
-//        File tempDocx = File.createTempFile("temp", ".docx");
-//
-//        File officeHome = new File("C:/Program Files/LibreOffice");
-//
-//        LocalOfficeManager officeManager = LocalOfficeManager.builder()
-//                .officeHome(officeHome)
-//                .build();
-//
-//        try {
-//            officeManager.start();
-//
-//            DocumentConverter converter = LocalConverter.make(officeManager);
-//            converter.convert(docFile).to(tempDocx).execute();
-//
-//        } finally {
-//            if (officeManager != null && officeManager.isRunning()) {
-//                officeManager.stop();
-//            }
-//        }
-//        return tempDocx;
-//    }
 
     // Соединение всех pdf в папке в один pdf файл
     public void mergePDFs(List<String> inputFiles, String outputFile) throws IOException {
@@ -205,6 +183,13 @@ public class ConvertorService {
         if(inputFiles.isEmpty()){
             logger.error("Нет PDF-файлов в указанной папке");
             throw new IllegalArgumentException("Нет PDF-файлов в указанной папке");
+        }
+        long countFilesPsi = inputFiles.stream()
+                .map(File::new)
+                .filter(f->f.getName().startsWith("PSI"))
+                .count();
+        if (countFilesPsi ==1){
+            throw new IllegalArgumentException("В указанной папке  один файл ПСИ");
         }
         List<File> sortedFiles = inputFiles.stream()
                 .map(File::new)

@@ -24,8 +24,6 @@ public class PsiService {
     @Autowired
     FilterEquipmentService filterEquipmentService;
     @Autowired
-    ScannerFileService scannerFileService;
-    @Autowired
     ConvertorService convertorService;
 
     private static final Logger logger = LoggerFactory.getLogger(ConvertorService.class);
@@ -93,7 +91,7 @@ public class PsiService {
 
 
                     if ((i + 1) % 10 == 0 || i == arr.size() - 1) {
-                        docxUpdateTextService.searchTitle(CodeMapping.PSI_PATTERN_FIRST.getDescription(), lastname, CodeMapping.PSI_PATTERN_DATE.getDescription(), document, 12);
+                        docxUpdateTextService.searchTitleForPsi(CodeMapping.PSI_PATTERN_FIRST.getDescription(), lastname, CodeMapping.PSI_PATTERN_DATE.getDescription(), document, 12);
 
                         try (ByteArrayOutputStream fileInMemory = new ByteArrayOutputStream()) {
                             document.write(fileInMemory);
@@ -115,89 +113,4 @@ public class PsiService {
         }
     }
 
-
-
-    public  void mergeDocx(String folder) {
-        if (folder.isEmpty()) {
-            throw new   RuntimeException("Введите путь к папке");
-        }
-        List<File> sortedFiles= arrayPathAbsoluteForDocx(folder);
-
-
-        logger.info("Файлы для слияния (по дате изменения): {}", sortedFiles);
-
-        String outputFilePath = folder.endsWith(File.separator)
-                ? folder + "merged_output.docx"
-                : folder + File.separator + "merged_output.docx";
-
-        try (XWPFDocument mergedDoc = new XWPFDocument()) {
-
-            for (File file : sortedFiles) {
-                try (XWPFDocument srcDoc = new XWPFDocument(new FileInputStream(file))) {
-
-                    // Копируем параграфы
-                    for (XWPFParagraph srcPar : srcDoc.getParagraphs()) {
-                        XWPFParagraph newPar = mergedDoc.createParagraph();
-                        newPar.getCTP().set(srcPar.getCTP());
-                    }
-
-                    // Копируем таблицы
-                    for (XWPFTable srcTable : srcDoc.getTables()) {
-                        XWPFTable newTable = mergedDoc.createTable();
-                        copyTable(mergedDoc, newTable, srcTable);
-                    }
-                }
-            }
-
-            try (FileOutputStream out = new FileOutputStream(outputFilePath)) {
-                mergedDoc.write(out);
-            }
-        } catch (IOException e) {
-            logger.error("Ошибка ", e);
-            throw new RuntimeException(e);
-
-        }
-    }
-
-    public   List<File> arrayPathAbsoluteForDocx(String folderPath) {
-        File folder = new File(folderPath);
-        File[] listOfFiles = folder.listFiles();
-        List<String> listFilesPdfAbsolute = new ArrayList<>();
-        if (folder.isDirectory() && folder.exists()) {
-            if (listOfFiles != null) {
-                for (File file : listOfFiles) {
-                    if (file.getAbsolutePath().toLowerCase().endsWith(".docx")) {
-                        listFilesPdfAbsolute.add(file.getAbsolutePath());
-                    }
-                }
-            }
-        }else {
-            logger.info("Папки не существует");
-            throw  new IllegalArgumentException("Папки не существует");
-        }
-        return listFilesPdfAbsolute.stream()
-                .map(File::new)
-                .sorted(Comparator.comparingLong(File::lastModified))
-                .toList();
-    }
-
-    public static void copyTable(XWPFDocument doc, XWPFTable newTable, XWPFTable srcTable) {
-        // Копируем свойства таблицы
-        newTable.getCTTbl().setTblPr(srcTable.getCTTbl().getTblPr());
-
-        // Копируем строки
-        for (XWPFTableRow srcRow : srcTable.getRows()) {
-            XWPFTableRow newTableRow = newTable.createRow();
-            List<XWPFTableCell> newCells = newTableRow.getTableCells();
-
-            // Удаляем стандартную пустую ячейку
-            newCells.clear();
-
-            // Копируем каждую ячейку
-            for (XWPFTableCell srcCell : srcRow.getTableCells()) {
-                XWPFTableCell newCell = newTableRow.addNewTableCell();
-                newCell.getCTTc().set(srcCell.getCTTc()); // копируем всю структуру ячейки
-            }
-        }
-    }
 }
