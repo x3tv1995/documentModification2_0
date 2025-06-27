@@ -27,8 +27,12 @@ public class PsiService {
     ConvertorService convertorService;
 
     private static final Logger logger = LoggerFactory.getLogger(ConvertorService.class);
+    private static final String TRO_KEY = "ТРО";
+    private static final int MAX_ROWS = 10;
+    private static final int FIRST_TABLE_INDEX = 0;
+    private static final int DEFAULT_FONT_SIZE = 10;
 
-    public  void fillingFirstColumnInTable(String pathFile, String outputFile, String pathExcel,String lastname) throws IOException, OfficeException {
+    public void fillingFirstColumnInTable(String pathFile, String outputFile, String pathExcel, String lastname) throws IOException, OfficeException {
 
         String key = filterEquipmentService.filterBybnshi(pathExcel);
 
@@ -38,21 +42,16 @@ public class PsiService {
         int count = 0;
         int rowCounter = 0;
         int startRow = 2;
-        int firstTable = 0;
-        int countRow = 10;
-        int sizeFont = 10;
-        String tro = "ТРО";
         XWPFDocument document = null;
         XWPFTable table = null;
-        try (FileInputStream fis = new FileInputStream(Objects.requireNonNull(pathFile))){
+        try (FileInputStream fis = new FileInputStream(Objects.requireNonNull(pathFile))) {
             document = new XWPFDocument(fis);
-
-            table = document.getTables().get(firstTable);
+            table = document.getTables().get(FIRST_TABLE_INDEX);
             List<String> arr = numberProductionService.numberProductionFromExcelInArray(pathExcel, 0, 0);
             for (int i = 0; i < arr.size(); i++) {
-                System.out.println(" номер " + i);
-                if (count != countRow) {
-                    if (tro.equals(key)) {
+
+                if (count != MAX_ROWS) {
+                    if (TRO_KEY.equals(key)) {
                         startRow = 3;
                     }
                     int targetIndex = rowCounter + startRow;
@@ -74,33 +73,23 @@ public class PsiService {
                     //ячейка т.е. столбец
                     XWPFTableCell cell = cells.get(1);
 
-                    while (!cell.getParagraphs().isEmpty()) {
-                        cell.removeParagraph(0);
-                    }
-
-                    XWPFParagraph paragraph = cell.addParagraph();
-
-                    paragraph.setFirstLineIndent(0);
-
-
-                    XWPFRun run = paragraph.createRun();
-                    run.setText(arr.get(i));
-                    run.setFontSize(sizeFont);
+                    clearCell(cell);
+                    addTextToCell(cell, arr.get(i), DEFAULT_FONT_SIZE);
                     count++;
                     rowCounter++;
 
 
-                    if ((i + 1) % 10 == 0 || i == arr.size() - 1) {
+                    if ((i + 1) % MAX_ROWS == 0 || i == arr.size() - 1) {
                         docxUpdateTextService.searchTitleForPsi(CodeMapping.PSI_PATTERN_FIRST.getDescription(), lastname, CodeMapping.PSI_PATTERN_DATE.getDescription(), document, 12);
 
                         try (ByteArrayOutputStream fileInMemory = new ByteArrayOutputStream()) {
                             document.write(fileInMemory);
                             String uniqueFileName = "PSI" + System.currentTimeMillis() + ".docx";
-                            String filePath =outputFile +"\\"+ uniqueFileName;
-                          convertorService.convertFromStreamToPdf(fileInMemory, filePath);
+                            String filePath = outputFile + "\\" + uniqueFileName;
+                            convertorService.convertFromStreamToPdf(fileInMemory, filePath);
                         }
                         document = new XWPFDocument(new FileInputStream(pathFile));
-                        table = document.getTables().get(firstTable);
+                        table = document.getTables().get(FIRST_TABLE_INDEX);
                         rowCounter = 0;
                         count = 0;
                     }
@@ -111,6 +100,20 @@ public class PsiService {
 
 
         }
+    }
+
+    private void clearCell(XWPFTableCell cell) {
+        while (!cell.getParagraphs().isEmpty()) {
+            cell.removeParagraph(0);
+        }
+    }
+
+    private void addTextToCell(XWPFTableCell cell, String text, int fontSize) {
+        XWPFParagraph paragraph = cell.addParagraph();
+        XWPFRun run = paragraph.createRun();
+        run.setText(text);
+        run.setFontSize(fontSize);
+        paragraph.setFirstLineIndent(0);
     }
 
 }
