@@ -89,7 +89,7 @@ public class StartupManagerService {
                     docxUpdateTextService.numbersInBold(docPath,numberInBold,sizeText);
                     firstIteration = false;
                 } else {
-                    docxUpdateTextService.replaceWordInFile(documentReplaceRequestDTO,number);
+                    docxUpdateTextService.replaceWordInFileReplay(documentReplaceRequestDTO,number);
                     docxUpdateTextService.numbersInBold(docPath,numberInBold,sizeText);
                 }
                 convertorService.convertorDocToPdf(docPath, pathDirectory);

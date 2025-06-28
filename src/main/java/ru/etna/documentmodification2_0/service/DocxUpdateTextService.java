@@ -67,7 +67,7 @@ public class DocxUpdateTextService {
                 logger.info(fullText);
                 if (!numberReplaced) {
                     String newText = patternNumber + number + " ";
-                    replaceInParagraph(paragraph, fullText, numberSearch, newText, sizeText);
+                    numberReplaced = replaceInParagraph(paragraph, fullText, numberSearch, newText, sizeText);
                     logger.info("ЗАМЕНИЛ!!!!");
                 }
 
@@ -96,6 +96,7 @@ public class DocxUpdateTextService {
         String patternNumber = documentReplaceRequestDTO.getPatternNumber();
         String numberSearch = documentReplaceRequestDTO.getNumberSearch();
         int sizeText = documentReplaceRequestDTO.getFontSize();
+
         try (FileInputStream fis = new FileInputStream(docPath);
              XWPFDocument document = new XWPFDocument(fis)) {
 //        try {
@@ -104,6 +105,7 @@ public class DocxUpdateTextService {
 //            XWPFDocument document = documentCacheService.getCachedDocTemplate();
             boolean numberReplaced = false;
             for (XWPFParagraph paragraph : document.getParagraphs()) {
+
                 if (numberReplaced) {
                     break;
                 }
@@ -120,9 +122,10 @@ public class DocxUpdateTextService {
                 String fullText = paragraphText.toString();
                 logger.info("Заводской №: " + numberReplaced + " == True значит номер поменял ");
                 logger.info(fullText);
+
                 if (!numberReplaced) {
                     String newText = patternNumber + number + " ";
-                    replaceInParagraph(paragraph, fullText, numberSearch, newText, sizeText);
+                    numberReplaced = replaceInParagraph(paragraph, fullText, numberSearch, newText, sizeText);
                     logger.info("ЗАМЕНИЛ!!!!");
                 }
             }
@@ -168,7 +171,7 @@ public class DocxUpdateTextService {
 
                 if (!numberReplaced) {
                     String newText = patternNumber + number;
-                    replaceInParagraph(paragraph, fullText, replaceNumber, newText, sizeText);
+                    numberReplaced = replaceInParagraph(paragraph, fullText, replaceNumber, newText, sizeText);
                     logger.info("ЗАМЕНИЛ!!!!");
                 }
             }
@@ -299,7 +302,7 @@ public class DocxUpdateTextService {
                 logger.info(fullText);
                 if (!numberReplaced) {
                     String newText = patternNumber + number + " ";
-                    replaceInParagraph(paragraph, fullText, numberSearch, newText, sizeText);
+                    numberReplaced = replaceInParagraph(paragraph, fullText, numberSearch, newText, sizeText);
                     logger.info("ЗАМЕНИЛ!!!!");
                 }
                 logger.info("Представитель ОТК: " + numberReplaced + " == True значит номер поменял ");

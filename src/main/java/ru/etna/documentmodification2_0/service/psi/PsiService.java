@@ -10,8 +10,6 @@ import ru.etna.documentmodification2_0.enums.CodeMapping;
 import ru.etna.documentmodification2_0.service.*;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -31,6 +29,8 @@ public class PsiService {
     private static final int MAX_ROWS = 10;
     private static final int FIRST_TABLE_INDEX = 0;
     private static final int DEFAULT_FONT_SIZE = 10;
+
+
 
     public void fillingFirstColumnInTable(String pathFile, String outputFile, String pathExcel, String lastname) throws IOException, OfficeException {
 

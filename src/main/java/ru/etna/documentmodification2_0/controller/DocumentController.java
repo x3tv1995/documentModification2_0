@@ -43,6 +43,12 @@ public class DocumentController {
         model.addAttribute("formPsi", new PsiFormDto());
         return "index";
     }
+    @GetMapping("/process")
+    public String showFormPassports(Model model) {
+        model.addAttribute("formPassports", new DocumentFormDTO());
+        model.addAttribute("formPsi", new PsiFormDto());
+        return "index";
+    }
 
     @PostMapping("/processPsi")
     public String processPsi(PsiFormDto psiFormDto, Model model) {

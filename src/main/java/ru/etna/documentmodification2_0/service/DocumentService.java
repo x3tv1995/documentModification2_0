@@ -1,9 +1,13 @@
 package ru.etna.documentmodification2_0.service;
 
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import ru.etna.documentmodification2_0.dto.DocumentFormDTO;
 import ru.etna.documentmodification2_0.dto.PsiFormDto;
+import ru.etna.documentmodification2_0.dto.TempFilesDTO;
 import ru.etna.documentmodification2_0.service.psi.PsiService;
 
 
@@ -19,6 +23,8 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class DocumentService {
+
+    private final Logger logger = LoggerFactory.getLogger(DocumentService.class);
     private final ConvertorService convertorService;
     private final FilterEquipmentService filterEquipmentService;
     private final ScannerFileService scannerFileService;
@@ -26,19 +32,17 @@ public class DocumentService {
 
 
     public void process(DocumentFormDTO documentFormDTO) throws Exception {
-        File tempDocx = Files.createTempFile("docx-", ".docx").toFile();
-        documentFormDTO.getDocPath().transferTo(tempDocx);
-        String docPath = tempDocx.getAbsolutePath();
+        logger.info("Запускаю процесс для обработки паспортов");
+        TempFilesDTO files = createTempDocxAndExcel(documentFormDTO.getDocPath(),documentFormDTO.getPathExcel());
 
-        File tempExel = Files.createTempFile("xlsx-", ".xlsx").toFile();
-        documentFormDTO.getPathExcel().transferTo(tempExel);
-        String pathExcel = tempExel.getAbsolutePath();
 
-        String key = filterEquipmentService.filterBybnshi(pathExcel);
+
+        String key = filterEquipmentService.filterBybnshi(files.getExcelPath());
+        logger.info("Получаю ключ для поиска шаблона для: {}", key);
         filterEquipmentService.filterByName(
                 key,
-                pathExcel,
-                docPath,
+                files.getExcelPath(),
+                files.getDocxPath(),
                 documentFormDTO.getPathDirectory(),
                 documentFormDTO.getLastName(),
                 documentFormDTO.getData()
@@ -56,8 +60,9 @@ public class DocumentService {
         if(listAllPdfName.size() <= 1){
             throw new RuntimeException("В папке должно быть более  1 файла .pdf");
         }
+        logger.info("Начинаю мёрж PDF паспортов");
             convertorService.mergePDFs(listAllPdfName, folder);
-
+        logger.info("закончил мёрж PDF паспортов");
     }
     public void mergePdfForPsi(String folder) throws Exception {
         if (folder.isEmpty()) {
@@ -67,30 +72,35 @@ public class DocumentService {
             if(listAllPdfName.size() <= 1){
                 throw new RuntimeException("В папке должно быть более  1 файла .pdf");
             }
+        logger.info("Начинаю мёрж PDF ПСИ документов");
             convertorService.mergePDFsPsi(listAllPdfName, folder);
+        logger.info("Закончил мёрж PDF ПСИ документов");
 
     }
 
     public void processForDocx(PsiFormDto psiFormDto) throws Exception {
+        logger.info("Запускаю процесс для обработки ПСИ");
+        TempFilesDTO files = createTempDocxAndExcel(psiFormDto.getDocPath(),psiFormDto.getPathExcel());
+
+        psiService.fillingFirstColumnInTable(
+                files.getDocxPath(),
+                psiFormDto.getPathDirectory(),
+                files.getExcelPath(),
+                psiFormDto.getLastName()
+        );
+    }
+    private TempFilesDTO createTempDocxAndExcel(MultipartFile fileDocPath, MultipartFile fileExcelPath) throws Exception {
         File tempDocx = Files.createTempFile("docx-", ".docx").toFile();
-        psiFormDto.getDocPath().transferTo(tempDocx);
+        logger.info("Сохраняю временный файл 'Docx': {}", tempDocx.getAbsolutePath());
+        fileDocPath.transferTo(tempDocx);
         String docPath = tempDocx.getAbsolutePath();
 
         File tempExel = Files.createTempFile("xlsx-", ".xlsx").toFile();
-        psiFormDto.getPathExcel().transferTo(tempExel);
+        logger.info("Сохраняю временный файл 'Exel': {}", tempExel.getAbsolutePath());
+        fileExcelPath.transferTo(tempExel);
         String pathExcel = tempExel.getAbsolutePath();
 
-        psiService.fillingFirstColumnInTable(
-
-                docPath,
-                psiFormDto.getPathDirectory(),
-                pathExcel,
-                psiFormDto.getLastName()
-
-        );
-
-
-
-
+        return  new TempFilesDTO(docPath, pathExcel);
     }
+
 }
