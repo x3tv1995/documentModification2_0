@@ -6,11 +6,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.etna.documentmodification2_0.enums.CodeMapping;
 import ru.etna.documentmodification2_0.service.*;
+import ru.etna.documentmodification2_0.service.psi.equipment.EquipmentHandlerForPsi;
 
 import java.io.*;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Service
@@ -18,17 +19,19 @@ public class PsiService {
     @Autowired
     NumberProductionService numberProductionService;
     @Autowired
-    DocxUpdateTextService docxUpdateTextService;
-    @Autowired
     FilterEquipmentService filterEquipmentService;
     @Autowired
     ConvertorService convertorService;
-
+    @Autowired
+    private Map<String, EquipmentHandlerForPsi> handlers;
     private static final Logger logger = LoggerFactory.getLogger(ConvertorService.class);
     private static final String TRO_KEY = "ТРО";
+    private static final String SOKT_KEY = "СОКТ";
+    private static final String OKVT_KEY = "ОКВТ";
     private static final int MAX_ROWS = 10;
     private static final int FIRST_TABLE_INDEX = 0;
     private static final int DEFAULT_FONT_SIZE = 10;
+    private static final int DEFAULT_SIZE_TEXT = 12;
 
 
 
@@ -51,7 +54,9 @@ public class PsiService {
             for (int i = 0; i < arr.size(); i++) {
 
                 if (count != MAX_ROWS) {
-                    if (TRO_KEY.equals(key)) {
+                    if (TRO_KEY.equals(key) ||
+                            SOKT_KEY.equals(key) ||
+                            OKVT_KEY.equals(key)) {
                         startRow = 3;
                     }
                     int targetIndex = rowCounter + startRow;
@@ -80,7 +85,14 @@ public class PsiService {
 
 
                     if ((i + 1) % MAX_ROWS == 0 || i == arr.size() - 1) {
-                        docxUpdateTextService.searchTitleForPsi(CodeMapping.PSI_PATTERN_FIRST.getDescription(), lastname, CodeMapping.PSI_PATTERN_DATE.getDescription(), document, 12);
+                        try {
+
+                            EquipmentHandlerForPsi handler = handlers.get(key);
+                            handler.handlerPsi(lastname, document, DEFAULT_SIZE_TEXT);
+                        }catch (Exception e){
+                            logger.error("Отсутствует изменение ПСИ для "+key,e.getMessage());
+                            throw new IllegalStateException("Отсутствует изменение ПСИ для "+key,e);
+                        }
 
                         try (ByteArrayOutputStream fileInMemory = new ByteArrayOutputStream()) {
                             document.write(fileInMemory);

@@ -1,15 +1,20 @@
 package ru.etna.documentmodification2_0.service.equipment;
 
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.etna.documentmodification2_0.dto.DocumentReplaceRequestDTO;
 import ru.etna.documentmodification2_0.enums.CodeMapping;
+import ru.etna.documentmodification2_0.service.DocxUpdateTextService;
 import ru.etna.documentmodification2_0.service.StartupManagerService;
+import ru.etna.documentmodification2_0.service.psi.equipment.EquipmentHandlerForPsi;
 
 @Component("БРПП22")
-public class Brpp22EquipmentHandler implements EquipmentHandler {
+public class Brpp22EquipmentHandler implements EquipmentHandler, EquipmentHandlerForPsi {
     @Autowired
     private StartupManagerService startupManagerService;
+    @Autowired
+    private DocxUpdateTextService docxUpdateTextService;
 
 
     @Override
@@ -41,5 +46,11 @@ public class Brpp22EquipmentHandler implements EquipmentHandler {
         );
 
         startupManagerService.enterDatabase(dto, numberInBold);
+    }
+    @Override
+    public void handlerPsi(String lastName, XWPFDocument document, int sizeText) {
+        String patternFirst = CodeMapping.BRPP22_PSI_PATTERN_FIRST.getDescription();
+        String patternDate =  CodeMapping.BRPP22_PSI_PATTERN_DATE.getDescription();
+        docxUpdateTextService.searchTitleForPsi(patternFirst,lastName,patternDate,document,sizeText);
     }
 }

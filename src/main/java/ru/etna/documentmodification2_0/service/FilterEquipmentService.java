@@ -41,8 +41,9 @@ public class FilterEquipmentService {
         EQUIPMENNT.put("БВПП-02", new ArrayList<>(List.of("754")));
         EQUIPMENNT.put("БТР28Д", new ArrayList<>(List.of("895")));
         EQUIPMENNT.put("УПП", new ArrayList<>(List.of("011")));
-        EQUIPMENNT.put("УПП-18", new ArrayList<>(List.of("012")));
-        EQUIPMENNT.put("ОКВТ_СОКТ", new ArrayList<>(List.of("248", "211", "219", "035", "168", "055","249")));
+        EQUIPMENNT.put("УПП-18", new ArrayList<>(List.of("012","013")));
+        EQUIPMENNT.put("ОКВТ", new ArrayList<>(List.of("248", "211", "219",  "168", "249")));
+        EQUIPMENNT.put("СОКТ",new ArrayList<>(List.of( "035", "054", "055")));
         EQUIPMENNT.put("МИТ", new ArrayList<>(List.of("025", "785", "786","024")));
         EQUIPMENNT.put("ТВКМ", new ArrayList<>(List.of("136")));
 
@@ -77,11 +78,10 @@ public class FilterEquipmentService {
         try {
             String defaultKey = "defaultKey";
             String numberInBold = CodeMapping.FOR_PATTERN_SEARCH_NUMBER.getDescription();
+            EquipmentHandler handler = handlers.get(key);
             if ( key.equals(defaultKey)) {
-                EquipmentHandler  handlerDefault = handlers.get(key);
-                handlerDefault.handler(pathExcel,docPath,pathDirectory,lastName,data,numberInBold);
+                handler.handler(pathExcel,docPath,pathDirectory,lastName,data,numberInBold);
             }else {
-                EquipmentHandler handler = handlers.get(key);
                 handler.handler(pathExcel, docPath, pathDirectory, lastName, data, numberInBold);
             }
         } catch (IOException e) {

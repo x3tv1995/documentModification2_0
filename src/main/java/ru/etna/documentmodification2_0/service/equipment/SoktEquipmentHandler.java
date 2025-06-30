@@ -9,22 +9,23 @@ import ru.etna.documentmodification2_0.service.DocxUpdateTextService;
 import ru.etna.documentmodification2_0.service.StartupManagerService;
 import ru.etna.documentmodification2_0.service.psi.equipment.EquipmentHandlerForPsi;
 
-@Component("ТВКМ")
-public class TVKMEquipmentHandler implements EquipmentHandler, EquipmentHandlerForPsi {
+@Component("СОКТ")
+public class SoktEquipmentHandler implements EquipmentHandler, EquipmentHandlerForPsi {
     @Autowired
     private StartupManagerService startupManagerService;
     @Autowired
     private DocxUpdateTextService docxUpdateTextService;
-
     @Override
     public void handler(String pathExcel, String docPath, String pathDirectory, String lastName, String data, String numberInBold) throws Exception {
-        String patternFirst = CodeMapping.TVKM_PATTERN_FIRST.getDescription();
-        String patternDate  = CodeMapping.TVKM_PATTERN_DATE.getDescription();
-        String patternSpace = CodeMapping.TVKM_PATTERN_SPACEANDSIZEWORD.getDescription();
-        String numberSearch = CodeMapping.TVKM_PATTERN_NUMBER_SEARCH.getDescription();
-        String patternNumber = CodeMapping.TVKM_PATTERN_NUMBER.getDescription();
-        String replaceNumber= CodeMapping.TVKM_PATTERN_REPLACE_NUMBER.getDescription();
-        int fontSize = CodeMapping.TVKM_PATTERN_SPACEANDSIZEWORD.getSize();
+
+        String patternFirst = CodeMapping.SOKT_PATTERN_FIRST.getDescription();
+        String patternDate = CodeMapping.SOKT_PATTERN_DATE.getDescription();
+        String patternSpace = CodeMapping.SOKT_SPACEANDSIZEWORD.getDescription();
+        String numberSearch = CodeMapping.SOKT_NUMBER_SEARCH.getDescription();
+        String patternNumber = CodeMapping.SOKT_NUMBER.getDescription();
+        String replaceNumber = CodeMapping.SOKT_PATTERN_REPLACE_NUMBER.getDescription();
+        int fontSize = CodeMapping.SOKT_SPACEANDSIZEWORD.getSize();
+
 
         DocumentReplaceRequestDTO dto = new DocumentReplaceRequestDTO(
                 docPath,
@@ -40,13 +41,13 @@ public class TVKMEquipmentHandler implements EquipmentHandler, EquipmentHandlerF
                 pathExcel,
                 pathDirectory
         );
+
         startupManagerService.enterDatabase(dto, numberInBold);
     }
     @Override
     public void handlerPsi(String lastName, XWPFDocument document, int sizeText) {
-        String patternFirst = CodeMapping.TVKM_PSI_PATTERN_FIRST.getDescription();
-        String patternDate =  CodeMapping.TVKM_PSI_PATTERN_DATE.getDescription();
+        String patternFirst = CodeMapping.SOKT_PSI_PATTERN_FIRST.getDescription();
+        String patternDate =  CodeMapping.SOKT_PSI_PATTERN_DATE.getDescription();
         docxUpdateTextService.searchTitleForPsi(patternFirst,lastName,patternDate,document,sizeText);
     }
-
 }

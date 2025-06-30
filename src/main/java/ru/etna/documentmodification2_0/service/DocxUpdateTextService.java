@@ -348,6 +348,10 @@ public class DocxUpdateTextService {
                 String replacement = patternFirst + lastName + patterDate;
                 otkReplaced = replaceInParagraph(paragraph, fullText, template, replacement, sizeText);
                 logger.info("Представитель ОТК: {} == {}", lastName, otkReplaced ? "заменён" : "не найден");
+
+                if (!otkReplaced) {
+                    logger.warn("Не удалось найти шаблон в параграфе: {}", fullText);
+                }
             }
         }
     }
