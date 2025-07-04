@@ -28,7 +28,7 @@ public class FilterEquipmentService {
     private  Map<String, EquipmentHandler> handlers;
 
     static {
-        EQUIPMENNT.put("БТР", new ArrayList<>(List.of("910", "660", "534", "839", "002", "765")));
+        EQUIPMENNT.put("БТР", new ArrayList<>(List.of("910",  "002")));
         EQUIPMENNT.put("ТРО", new ArrayList<>(List.of("194", "186", "147", "242",
                 "207", "186", "212", "215", "213", "202", "246", "210", "229", "214", "218")));
         EQUIPMENNT.put("ЭК", new ArrayList<>(List.of("166", "159", "161")));
@@ -36,10 +36,18 @@ public class FilterEquipmentService {
         EQUIPMENNT.put("ОРТ", new ArrayList<>(List.of("162")));
         EQUIPMENNT.put("ВВЭК", new ArrayList<>(List.of("160", "165", "121", "158")));
         EQUIPMENNT.put("ВВЭК11400", new ArrayList<>(List.of("143")));
-        EQUIPMENNT.put("БРПП22", new ArrayList<>(List.of("157")));
+        EQUIPMENNT.put("БРПП22", new ArrayList<>(List.of("157","156")));
         EQUIPMENNT.put("БРПП60", new ArrayList<>(List.of("465")));
-        EQUIPMENNT.put("БВПП-02", new ArrayList<>(List.of("754")));
+        EQUIPMENNT.put("БРПП150", new ArrayList<>(List.of("355","656")));
+        EQUIPMENNT.put("БРПП800", new ArrayList<>(List.of("001")));
+        EQUIPMENNT.put("БВПП-02", new ArrayList<>(List.of("754","610")));
         EQUIPMENNT.put("БТР28Д", new ArrayList<>(List.of("895")));
+        EQUIPMENNT.put("БТР4ДЛ", new ArrayList<>(List.of("382","491","374","328")));
+        EQUIPMENNT.put("БТР12Д", new ArrayList<>(List.of("393")));
+        EQUIPMENNT.put("БТР14", new ArrayList<>(List.of("415","660","534","520","559","576")));
+        EQUIPMENNT.put("БТР26", new ArrayList<>(List.of("765")));
+        EQUIPMENNT.put("БТР27ГЛ", new ArrayList<>(List.of("839","895")));
+        EQUIPMENNT.put("БУИ", new ArrayList<>(List.of("240")));
         EQUIPMENNT.put("УПП", new ArrayList<>(List.of("011")));
         EQUIPMENNT.put("УПП-18", new ArrayList<>(List.of("012","013")));
         EQUIPMENNT.put("ОКВТ", new ArrayList<>(List.of("248", "211", "219",  "168", "249")));
@@ -78,12 +86,11 @@ public class FilterEquipmentService {
         try {
             String defaultKey = "defaultKey";
             String numberInBold = CodeMapping.FOR_PATTERN_SEARCH_NUMBER.getDescription();
-            EquipmentHandler handler = handlers.get(key);
-            if ( key.equals(defaultKey)) {
-                handler.handler(pathExcel,docPath,pathDirectory,lastName,data,numberInBold);
-            }else {
-                handler.handler(pathExcel, docPath, pathDirectory, lastName, data, numberInBold);
-            }
+
+               EquipmentHandler handler = handlers.get(key);
+               logger.info(" В МЕТОДЕ filterbyName "+ handler);
+                   handler.handler(pathExcel, docPath, pathDirectory, lastName, data, numberInBold);
+
         } catch (IOException e) {
             logger.error("Ошибка при выполнении enterDatabase: {}", e.getMessage());
             throw new RuntimeException("Ошибка при выполнении enterDatabase", e);

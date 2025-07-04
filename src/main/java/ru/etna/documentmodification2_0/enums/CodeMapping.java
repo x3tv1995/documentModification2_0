@@ -22,13 +22,56 @@ public enum CodeMapping {
     BTR28D_PATTERN_NUMBER(" № ", 10),
     BTR28D_PATTERN_REPLACE_NUMBER("\\s*№\\s*[A-Za-z0-9]{9}", 10),
 
+    BTR4DL_PATTERN_FIRST(" Представитель ОТК   __________         ", 10),
+    BTR4DL_PATTERN_DATE("              ______", 10),
+    BTR4DL_PATTERN_SPACEANDSIZEWORD("            ", 10),
+    BTR4DL_PATTERN_NUMBER_SEARCH("№\\s*_+\\s*", 10),
+    BTR4DL_PATTERN_NUMBER(" № ", 10),
+    BTR4DL_PATTERN_REPLACE_NUMBER("\\s*№\\s*[A-Za-z0-9]{9}", 10),
+
+    BTR12D_PATTERN_FIRST(" Представитель ОТК   __________     ", 10),
+    BTR12D_PATTERN_DATE("          ______", 10),
+    BTR12D_PATTERN_SPACEANDSIZEWORD("            ", 10),
+    BTR12D_PATTERN_NUMBER_SEARCH("№\\s*_+\\s*", 10),
+    BTR12D_PATTERN_NUMBER(" № ", 10),
+    BTR12D_PATTERN_REPLACE_NUMBER("\\s*№\\s*[A-Za-z0-9]{9}", 10),
+
+
+    BTR14_PATTERN_FIRST(" Представитель ОТК   __________        ", 10),
+    BTR14_PATTERN_DATE("                 _______", 10),
+    BTR14_PATTERN_SPACEANDSIZEWORD("             ", 10),
+    BTR14_PATTERN_NUMBER_SEARCH("№\\s*_+\\s*", 10),
+    BTR14_PATTERN_NUMBER(" № ", 10),
+    BTR14_PATTERN_REPLACE_NUMBER("\\s*№\\s*[A-Za-z0-9]{9}", 10),
+
+    BTR26_PATTERN_FIRST(" Представитель ОТК   __________     ", 10),
+    BTR26_PATTERN_DATE("             _______", 10),
+    BTR26_PATTERN_SPACEANDSIZEWORD("             ", 10),
+    BTR26_PATTERN_NUMBER_SEARCH("№\\s*_+\\s*", 10),
+    BTR26_PATTERN_NUMBER(" № ", 10),
+    BTR26_PATTERN_REPLACE_NUMBER("\\s*№\\s*[A-Za-z0-9]{9}", 10),
+
+    BTR27GL_PATTERN_FIRST(" Представитель ОТК   __________        ", 10),
+    BTR27GL_PATTERN_DATE("               _______", 10),
+    BTR27GL_PATTERN_SPACEANDSIZEWORD("             ", 10),
+    BTR27GL_PATTERN_NUMBER_SEARCH("№\\s*_+\\s*", 10),
+    BTR27GL_PATTERN_NUMBER(" № ", 10),
+    BTR27GL_PATTERN_REPLACE_NUMBER("\\s*№\\s*[A-Za-z0-9]{9}", 10),
+
+
+    BYI_PATTERN_FIRST(" Представитель ОТК   __________                ", 10),
+    BYI_PATTERN_DATE("                    _______", 10),
+    BYI_PATTERN_SPACEANDSIZEWORD("                ", 10),
+    BYI_PATTERN_NUMBER_SEARCH("\\s*заводской\\s*№\\s*_+\\s*", 10),
+    BYI_PATTERN_NUMBER(" заводской № ", 10),
+    BYI_PATTERN_REPLACE_NUMBER("\\s*заводской\\s*№\\s*[A-Za-z0-9]{9}", 10),
 
     BVPP_02_PATTERN_FIRST("Представитель ОТК   _______________   ", 10),
     BVPP_02_PATTERN_DATE("                     __________", 10),
     BVPP_02_PATTERN_SPACEANDSIZEWORD("                       ", 10),
-    BVPP_02_PATTERN_NUMBER_SEARCH("\\s*заводской\\s*№\\s*_+\\s*", 10),
-    BVPP_02_PATTERN_NUMBER("заводской № ", 10),
-    BVPP_02_PATTERN_REPLACE_NUMBER("\\s*заводской\\s*№\\s*[A-Za-z0-9]{9}\\s*", 10),
+    BVPP_02_PATTERN_NUMBER_SEARCH("№\\s*_+\\s*", 10),
+    BVPP_02_PATTERN_NUMBER(" № ", 10),
+    BVPP_02_PATTERN_REPLACE_NUMBER("\\s*\\s*№\\s*[A-Za-z0-9]{9}\\s*", 10),
 
 
     MIT_PATTERN_FIRST("     Представитель ОТК _______________            ", 10),
@@ -43,7 +86,7 @@ public enum CodeMapping {
     OKVT_PATTERN_DATE("                           ______", 10),
     OKVT_SPACEANDSIZEWORD("                     ", 10),
     OKVT_NUMBER_SEARCH("№\\s*_+\\s*", 10),
-    OKVT_NUMBER("№ ", 10),
+    OKVT_NUMBER(" № ", 10),
     OKVT_PATTERN_REPLACE_NUMBER("№\\s*[A-Za-z0-9]{9}", 10),
 
     SOKT_PATTERN_FIRST("Представитель ОТК _____________      ", 10),
@@ -72,9 +115,21 @@ public enum CodeMapping {
     BRPP22_PSI_PATTERN_DATE("                 _______", 10),
     BRPP22_PSI_SPACEANDSIZEWORD("          ", 10),
 
+    BRPP60_PSI_PATTERN_FIRST("Представитель ОТК   _____________________                              ", 10),
+    BRPP60_PSI_PATTERN_DATE("                      ____________", 10),
+    BRPP60_PSI_SPACEANDSIZEWORD("          ", 10),
+
+    BRPP150_PSI_PATTERN_FIRST("Представитель ОТК   _______________        ", 10),
+    BRPP150_PSI_PATTERN_DATE("           ____________", 10),
+    BRPP150_PSI_SPACEANDSIZEWORD("          ", 10),
+
     TRO_PSI_PATTERN_FIRST("Представитель ОТК   __________________         ", 10),
     TRO_PSI_PATTERN_DATE("                               _________", 10),
     TRO_PSI_SPACEANDSIZEWORD("          ", 10),
+
+    BTR4DL_PSI_PATTERN_FIRST("Представитель ОТК   __________________                  ", 10),
+    BTR4DL_PSI_PATTERN_DATE("                       _________", 10),
+    BTR4DL_PSI_SPACEANDSIZEWORD("          ", 10),
 
     TVKM_PSI_PATTERN_FIRST("Представитель ОТК   __________________                     ", 10),
     TVKM_PSI_PATTERN_DATE("                    _______", 10),
@@ -100,9 +155,9 @@ public enum CodeMapping {
     YPP_18_PATTERN_REPLACE_NUMBER("\\s*заводской\\s*№\\s*[A-Za-z0-9]{9}", 10),
 
 
-    ORT_PATTERN_FIRST("  Представитель ОТК   _______________               ", 10),
-    ORT_PATTERN_DATE("                     ______", 10),
-    ORT_PATTERN_SPACEANDSIZEWORD("               ", 10),
+    ORT_PATTERN_FIRST("       Представитель ОТК   _______________          ", 10),
+    ORT_PATTERN_DATE("                ______", 10),
+    ORT_PATTERN_SPACEANDSIZEWORD("          ", 10),
     ORT_PATTERN_NUMBER_SEARCH("\\s*заводской\\s*№\\s*_+\\s*", 10),
     ORT_PATTERN_NUMBER("заводской № ", 10),
     ORT_PATTERN_REPLACE_NUMBER("\\s*заводской\\s*№\\s*[A-Za-z0-9]{9}", 10),
@@ -154,19 +209,26 @@ public enum CodeMapping {
     BTR_PATTERN_REPLACE_NUMBER("заводской\\s*№\\s*[A-Za-z0-9]{9}", 10),
 
 
-    BRPP22_PATTERN_FIRST("Представитель ОТК ____________     ", 12),
+    BRPP22_PATTERN_FIRST("Представитель ОТК ____________      ", 12),
     BRPP22_PATTERN_DATE("           ________", 12),
     BRPP22_PATTERN_SPACEANDSIZEWORD("          ", 12),
     BRPP22_PATTERN_NUMBER_SEARCH("заводской\\s*№\\s*___*", 12),
     BRPP22_PATTERN_NUMBER("заводской № ", 12),
     BRPP22_PATTERN_REPLACE_NUMBER("заводской\\s*№\\s*[A-Za-z0-9]{9}", 12),
 
-    BRPP60_PATTERN_FIRST("Представитель ОТК                             ", 12),
-    BRPP60_PATTERN_DATE("                _______", 12),
-    BRPP60_PATTERN_SPACEANDSIZEWORD("             ", 12),
+    BRPP60_PATTERN_FIRST("Представитель ОТК ____________      ", 12),
+    BRPP60_PATTERN_DATE("            _______", 12),
+    BRPP60_PATTERN_SPACEANDSIZEWORD("         ", 12),
     BRPP60_PATTERN_NUMBER_SEARCH("заводской\\s*№\\s*___*", 12),
     BRPP60_PATTERN_NUMBER("заводской № ", 12),
-    BRPP60_PATTERN_REPLACE_NUMBER("заводской\\s*№\\s*[A-Za-z0-9]{9}", 12);
+    BRPP60_PATTERN_REPLACE_NUMBER("заводской\\s*№\\s*[A-Za-z0-9]{9}", 12),
+
+    BRPP150_PATTERN_FIRST("Представитель ОТК ____________      ", 12),
+    BRPP150_PATTERN_DATE("            _______", 12),
+    BRPP150_PATTERN_SPACEANDSIZEWORD("        ", 12),
+    BRPP150_PATTERN_NUMBER_SEARCH("заводской\\s*№\\s*___*", 12),
+    BRPP150_PATTERN_NUMBER("заводской № ", 12),
+    BRPP150_PATTERN_REPLACE_NUMBER("заводской\\s*№\\s*[A-Za-z0-9]{9}", 12);
 
 
     private final String description;

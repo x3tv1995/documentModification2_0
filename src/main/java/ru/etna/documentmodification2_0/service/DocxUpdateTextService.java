@@ -3,6 +3,7 @@ package ru.etna.documentmodification2_0.service;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -63,6 +64,7 @@ public class DocxUpdateTextService {
 
                 String fullText = paragraphText.toString();
 
+
                 logger.info("Заводской №: " + numberReplaced + " == True значит номер поменял ");
                 logger.info(fullText);
                 if (!numberReplaced) {
@@ -110,10 +112,12 @@ public class DocxUpdateTextService {
                     break;
                 }
                 List<XWPFRun> runs = paragraph.getRuns();
+
                 StringBuilder paragraphText = new StringBuilder();
 
                 for (XWPFRun run : runs) {
                     String text = run.getText(0);
+
                     if (text != null) {
                         paragraphText.append(text);
                     }
@@ -128,6 +132,7 @@ public class DocxUpdateTextService {
                     numberReplaced = replaceInParagraph(paragraph, fullText, numberSearch, newText, sizeText);
                     logger.info("ЗАМЕНИЛ!!!!");
                 }
+
             }
             try (FileOutputStream fos = new FileOutputStream(docPath)) {
                 document.write(fos);
@@ -174,6 +179,7 @@ public class DocxUpdateTextService {
                     numberReplaced = replaceInParagraph(paragraph, fullText, replaceNumber, newText, sizeText);
                     logger.info("ЗАМЕНИЛ!!!!");
                 }
+
             }
             try (FileOutputStream fos = new FileOutputStream(docPath)) {
                 document.write(fos);
@@ -361,10 +367,9 @@ public class DocxUpdateTextService {
                                        String pattern, String replacement, int fontSize) {
         Pattern p = Pattern.compile(pattern);
         Matcher m = p.matcher(fullText);
-
         if (m.find()) {
             String newText = m.replaceAll(replacement);
-
+            
             while (!paragraph.getRuns().isEmpty()) {
                 paragraph.removeRun(0);
             }
@@ -377,6 +382,8 @@ public class DocxUpdateTextService {
         }
         return false;
     }
+
+
 }
 
 

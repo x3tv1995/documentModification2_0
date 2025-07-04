@@ -13,7 +13,11 @@ import java.io.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
+/***
+ * Автор: Антон Долгов
+ * Дата создания 16.06.2025
+ * телеграмм @x3tv1995
+ */
 @Service
 public class PsiService {
     @Autowired

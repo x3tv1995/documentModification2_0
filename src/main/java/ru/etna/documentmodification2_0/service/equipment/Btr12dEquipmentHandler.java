@@ -9,24 +9,25 @@ import ru.etna.documentmodification2_0.service.DocxUpdateTextService;
 import ru.etna.documentmodification2_0.service.StartupManagerService;
 import ru.etna.documentmodification2_0.service.psi.equipment.EquipmentHandlerForPsi;
 
-@Component("БРПП60")
-public class Brpp60EquipmentHandler implements EquipmentHandler, EquipmentHandlerForPsi {
+@Component("БТР12Д")
+public class Btr12dEquipmentHandler implements EquipmentHandler, EquipmentHandlerForPsi {
     @Autowired
     private StartupManagerService startupManagerService;
     @Autowired
     private DocxUpdateTextService docxUpdateTextService;
 
     @Override
-    public void handler(String pathExcel, String docPath, String pathDirectory,
-                        String lastName, String data, String numberInBold) throws Exception {
+    public void handler(String pathExcel, String docPath,
+                        String pathDirectory, String lastName,
+                        String data, String numberInBold) throws Exception {
 
-        String patternFirst = CodeMapping.BRPP60_PATTERN_FIRST.getDescription();
-        String patternDate = CodeMapping.BRPP60_PATTERN_DATE.getDescription();
-        String patternSpace = CodeMapping.BRPP60_PATTERN_SPACEANDSIZEWORD.getDescription();
-        String numberSearch = CodeMapping.BRPP60_PATTERN_NUMBER_SEARCH.getDescription();
-        String patternNumber = CodeMapping.BRPP60_PATTERN_NUMBER.getDescription();
-        String replaceNumber = CodeMapping.BRPP60_PATTERN_REPLACE_NUMBER.getDescription();
-        int fontSize = CodeMapping.BRPP60_PATTERN_SPACEANDSIZEWORD.getSize();
+        String patternFirst = CodeMapping.BTR12D_PATTERN_FIRST.getDescription();
+        String patternDate = CodeMapping.BTR12D_PATTERN_DATE.getDescription();
+        String patternSpace = CodeMapping.BTR12D_PATTERN_SPACEANDSIZEWORD.getDescription();
+        String numberSearch = CodeMapping.BTR12D_PATTERN_NUMBER_SEARCH.getDescription();
+        String patternNumber = CodeMapping.BTR12D_PATTERN_NUMBER.getDescription();
+        String replaceNumber = CodeMapping.BTR12D_PATTERN_REPLACE_NUMBER.getDescription();
+        int fontSize = CodeMapping.BTR12D_PATTERN_SPACEANDSIZEWORD.getSize();
 
 
         DocumentReplaceRequestDTO dto = new DocumentReplaceRequestDTO(
@@ -46,13 +47,10 @@ public class Brpp60EquipmentHandler implements EquipmentHandler, EquipmentHandle
 
         startupManagerService.enterDatabase(dto, numberInBold);
     }
-
-
     @Override
     public void handlerPsi(String lastName, XWPFDocument document, int sizeText) {
-        String patternFirst = CodeMapping.BRPP60_PSI_PATTERN_FIRST.getDescription();
-        String patternDate =  CodeMapping.BRPP60_PSI_PATTERN_DATE.getDescription();
+        String patternFirst = CodeMapping.BTR4DL_PSI_PATTERN_FIRST.getDescription();
+        String patternDate =  CodeMapping.BTR4DL_PSI_PATTERN_DATE.getDescription();
         docxUpdateTextService.searchTitleForPsi(patternFirst,lastName,patternDate,document,sizeText);
     }
-
 }

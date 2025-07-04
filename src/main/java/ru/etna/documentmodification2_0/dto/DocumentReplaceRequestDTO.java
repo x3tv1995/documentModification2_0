@@ -6,7 +6,6 @@ import lombok.Data;
 @Data
 public class DocumentReplaceRequestDTO {
     private String docPath;
-//    private String number;
     private String lastName;
     private String data;
 

@@ -101,7 +101,7 @@ public class ConvertorService {
                 new File(userHome + "/Desktop/DocumentTool/libreoffice"),
                 new File("./libreoffice"),
                 new File("C:/Program Files/LibreOffice"),
-                new File("C:/Program Files (x86)/LibreOffice"),
+                new File("C:/Program Files (x86)/LibreOffice")
 
         };
 

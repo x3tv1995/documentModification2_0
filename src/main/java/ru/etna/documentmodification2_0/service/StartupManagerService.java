@@ -24,7 +24,7 @@ public class StartupManagerService {
     private static final Logger log = LoggerFactory.getLogger(StartupManagerService.class);
 
     //ВНИМАТЕЛЬНО ПОСМОТРЕТЬ НОВЫЕ ДАННЫЕ ПО ДОБАВЛЕНИЮ ШАБЛОН СТРОК и т.д.
-    //добавил метод   docxUpdateTextService.numbersInBold(docPath,numberInBold) и переменнную  String numberInBold
+    //добавил метод   docxUpdateTextService.numbersInBold(docPath,numberInBold) и переменную  String numberInBold
     public void enterDatabase(DocumentReplaceRequestDTO documentReplaceRequestDTO, String numberInBold) throws Exception {
         String docPath = documentReplaceRequestDTO.getDocPath();
         int sizeText = documentReplaceRequestDTO.getFontSize();
