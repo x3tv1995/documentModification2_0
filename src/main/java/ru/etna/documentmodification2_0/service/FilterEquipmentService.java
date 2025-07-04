@@ -34,7 +34,8 @@ public class FilterEquipmentService {
         EQUIPMENNT.put("ЭК", new ArrayList<>(List.of("166", "159", "161")));
         EQUIPMENNT.put("ЭК6500", new ArrayList<>(List.of("032", "030")));
         EQUIPMENNT.put("ОРТ", new ArrayList<>(List.of("162")));
-        EQUIPMENNT.put("ВВЭК", new ArrayList<>(List.of("160", "165", "121", "158")));
+        EQUIPMENNT.put("ВВЭК", new ArrayList<>(List.of("160", "165","158")));
+        EQUIPMENNT.put("ВВЭК24000", new ArrayList<>(List.of( "121")));
         EQUIPMENNT.put("ВВЭК11400", new ArrayList<>(List.of("143")));
         EQUIPMENNT.put("БРПП22", new ArrayList<>(List.of("157","156")));
         EQUIPMENNT.put("БРПП60", new ArrayList<>(List.of("465")));
