@@ -45,10 +45,17 @@ public class DocxUpdateTextService {
 //            XWPFDocument document = documentCacheService.getCachedDocTemplate();
             boolean otkReplaced = false;
             boolean numberReplaced = false;
+            boolean startProcessing = false;
+
             for (XWPFParagraph paragraph : document.getParagraphs()) {
-                if (otkReplaced && numberReplaced) {
-                    break;
-                }
+
+
+
+
+
+
+
+
 
 
                 List<XWPFRun> runs = paragraph.getRuns();
@@ -62,8 +69,18 @@ public class DocxUpdateTextService {
                     }
                 }
 
-                String fullText = paragraphText.toString();
+               String fullText = paragraphText.toString();
+                // ищем ключевую фразу
+                if (!startProcessing && fullText.contains("СВИДЕТЕЛЬСТВО О ПРИЁМКЕ")) {
+                    startProcessing = true;
+                }
 
+                if (!startProcessing) {
+                    continue; //пропускаю обработку
+                }
+                if (otkReplaced && numberReplaced) {
+                    break;
+                }
 
                 logger.info("Заводской №: " + numberReplaced + " == True значит номер поменял ");
                 logger.info(fullText);
@@ -106,11 +123,10 @@ public class DocxUpdateTextService {
 //            documentCacheService.templateLoad(docPath);
 //            XWPFDocument document = documentCacheService.getCachedDocTemplate();
             boolean numberReplaced = false;
+            boolean startProcessing = false;
             for (XWPFParagraph paragraph : document.getParagraphs()) {
 
-                if (numberReplaced) {
-                    break;
-                }
+
                 List<XWPFRun> runs = paragraph.getRuns();
 
                 StringBuilder paragraphText = new StringBuilder();
@@ -124,9 +140,20 @@ public class DocxUpdateTextService {
                 }
 
                 String fullText = paragraphText.toString();
+
+                // ищем ключевую фразу
+                if (!startProcessing && fullText.contains("СВИДЕТЕЛЬСТВО О ПРИЁМКЕ")) {
+                    startProcessing = true;
+                }
+
+                if (!startProcessing) {
+                    continue; //пропускаю обработку
+                }
+                if (numberReplaced) {
+                    break;
+                }
                 logger.info("Заводской №: " + numberReplaced + " == True значит номер поменял ");
                 logger.info(fullText);
-
                 if (!numberReplaced) {
                     String newText = patternNumber + number + " ";
                     numberReplaced = replaceInParagraph(paragraph, fullText, numberSearch, newText, sizeText);
@@ -158,8 +185,9 @@ public class DocxUpdateTextService {
 //            documentCacheService.templateLoad(docPath);
 //            XWPFDocument document = documentCacheService.getCachedDocTemplate();
             boolean numberReplaced = false;
+            boolean startProcessing = false;
             for (XWPFParagraph paragraph : document.getParagraphs()) {
-                if (numberReplaced) break;
+
                 List<XWPFRun> runs = paragraph.getRuns();
                 StringBuilder paragraphText = new StringBuilder(); // Собираем текст параграфа
 
@@ -171,6 +199,16 @@ public class DocxUpdateTextService {
                 }
 
                 String fullText = paragraphText.toString();
+                // ищем ключевую фразу
+                if (!startProcessing && fullText.contains("СВИДЕТЕЛЬСТВО О ПРИЁМКЕ")) {
+                    startProcessing = true;
+                }
+
+                if (!startProcessing) {
+                    continue; //пропускаю обработку
+                }
+                if (numberReplaced) break;
+
                 logger.info("Заводской №: " + numberReplaced + " == True значит номер поменял ");
                 logger.info(fullText);
 
@@ -200,9 +238,10 @@ public class DocxUpdateTextService {
              XWPFDocument document = new XWPFDocument(fis)) {
 
             boolean numberReplaced = false;
+            boolean startProcessing = false;
 
             for (XWPFParagraph paragraph : document.getParagraphs()) {
-                if (numberReplaced) break;
+
 
                 List<XWPFRun> runs = paragraph.getRuns();
                 if (runs.isEmpty()) continue;
@@ -217,6 +256,16 @@ public class DocxUpdateTextService {
 
                 String fullText = fullTextBuilder.toString();
                 logger.info("Полный текст параграфа: " + fullText);
+
+                // ищем ключевую фразу
+                if (!startProcessing && fullText.contains("СВИДЕТЕЛЬСТВО О ПРИЁМКЕ")) {
+                    startProcessing = true;
+                }
+
+                if (!startProcessing) {
+                    continue; //пропускаю обработку
+                }
+                if (numberReplaced) break;
 
                 Pattern pattern = Pattern.compile(replaceNumber);
                 Matcher matcher = pattern.matcher(fullText);
@@ -289,10 +338,9 @@ public class DocxUpdateTextService {
 //            XWPFDocument document = documentCacheService.getCachedDocTemplate();
             boolean otkReplaced = false;
             boolean numberReplaced = false;
+            boolean startProcessing = false;
             for (XWPFParagraph paragraph : document.getParagraphs()) {
-                if (otkReplaced && numberReplaced) {
-                    break;
-                }
+
                 List<XWPFRun> runs = paragraph.getRuns();
                 StringBuilder paragraphText = new StringBuilder(); // Собираем текст параграфа
 
@@ -304,6 +352,18 @@ public class DocxUpdateTextService {
                 }
 
                 String fullText = paragraphText.toString();
+
+                // ищем ключевую фразу
+                if (!startProcessing && fullText.contains("СВИДЕТЕЛЬСТВО О ПРИЁМКЕ")) {
+                    startProcessing = true;
+                }
+
+                if (!startProcessing) {
+                    continue; //пропускаю обработку
+                }
+                if (otkReplaced && numberReplaced) {
+                    break;
+                }
                 logger.info("Заводской №: " + numberReplaced + " == True значит номер поменял ");
                 logger.info(fullText);
                 if (!numberReplaced) {

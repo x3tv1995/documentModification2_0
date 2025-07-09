@@ -9,24 +9,22 @@ import ru.etna.documentmodification2_0.service.DocxUpdateTextService;
 import ru.etna.documentmodification2_0.service.StartupManagerService;
 import ru.etna.documentmodification2_0.service.psi.equipment.EquipmentHandlerForPsi;
 
-@Component("УПП")
-public class YppEquipmentHandler implements EquipmentHandler, EquipmentHandlerForPsi {
+@Component("ОКВА")
+public class OkvaEquipmentHandler implements EquipmentHandler, EquipmentHandlerForPsi {
     @Autowired
     private StartupManagerService startupManagerService;
     @Autowired
     private DocxUpdateTextService docxUpdateTextService;
-
     @Override
-    public void handler(String pathExcel, String docPath, String pathDirectory,
-                        String lastName, String data, String numberInBold) throws Exception {
+    public void handler(String pathExcel, String docPath, String pathDirectory, String lastName, String data, String numberInBold) throws Exception {
 
-        String patternFirst = CodeMapping.YPP_PATTERN_FIRST.getDescription();
-        String patternDate = CodeMapping.YPP_PATTERN_DATE.getDescription();
-        String patternSpace = CodeMapping.YPP_PATTERN_SPACEANDSIZEWORD.getDescription();
-        String numberSearch = CodeMapping.YPP_PATTERN_NUMBER_SEARCH.getDescription();
-        String patternNumber = CodeMapping.YPP_PATTERN_NUMBER.getDescription();
-        String replaceNumber = CodeMapping.YPP_PATTERN_REPLACE_NUMBER.getDescription();
-        int fontSize = CodeMapping.YPP_PATTERN_SPACEANDSIZEWORD.getSize();
+        String patternFirst = CodeMapping.OKVA_PATTERN_FIRST.getDescription();
+        String patternDate = CodeMapping.OKVA_PATTERN_DATE.getDescription();
+        String patternSpace = CodeMapping.OKVA_SPACEANDSIZEWORD.getDescription();
+        String numberSearch = CodeMapping.OKVA_NUMBER_SEARCH.getDescription();
+        String patternNumber = CodeMapping.OKVA_NUMBER.getDescription();
+        String replaceNumber = CodeMapping.OKVA_PATTERN_REPLACE_NUMBER.getDescription();
+        int fontSize = CodeMapping.OKVA_SPACEANDSIZEWORD.getSize();
 
 
         DocumentReplaceRequestDTO dto = new DocumentReplaceRequestDTO(
@@ -48,8 +46,8 @@ public class YppEquipmentHandler implements EquipmentHandler, EquipmentHandlerFo
     }
     @Override
     public void handlerPsi(String lastName, XWPFDocument document, int sizeText) {
-        String patternFirst = CodeMapping.YPP1_PSI_PATTERN_FIRST.getDescription();
-        String patternDate =  CodeMapping.YPP1_PSI_PATTERN_DATE.getDescription();
+        String patternFirst = CodeMapping.OKVT_PSI_PATTERN_FIRST.getDescription();
+        String patternDate =  CodeMapping.OKVT_PSI_PATTERN_DATE.getDescription();
         docxUpdateTextService.searchTitleForPsi(patternFirst,lastName,patternDate,document,sizeText);
     }
 }

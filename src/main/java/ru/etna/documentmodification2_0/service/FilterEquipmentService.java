@@ -28,7 +28,7 @@ public class FilterEquipmentService {
     private  Map<String, EquipmentHandler> handlers;
 
     static {
-        EQUIPMENNT.put("БТР", new ArrayList<>(List.of("910",  "002")));
+        EQUIPMENNT.put("БТР", new ArrayList<>(List.of("910")));
         EQUIPMENNT.put("ТРО", new ArrayList<>(List.of("194", "186", "147", "242",
                 "207", "186", "212", "215", "213", "202", "246", "210", "229", "214", "218")));
         EQUIPMENNT.put("ЭК", new ArrayList<>(List.of("166", "159", "161")));
@@ -47,14 +47,27 @@ public class FilterEquipmentService {
         EQUIPMENNT.put("БТР12Д", new ArrayList<>(List.of("393")));
         EQUIPMENNT.put("БТР14", new ArrayList<>(List.of("415","660","534","520","559","576")));
         EQUIPMENNT.put("БТР26", new ArrayList<>(List.of("765")));
-        EQUIPMENNT.put("БТР27ГЛ", new ArrayList<>(List.of("839","895")));
+        EQUIPMENNT.put("БТР27ГЛ", new ArrayList<>(List.of("839","895",  "002")));
         EQUIPMENNT.put("БУИ", new ArrayList<>(List.of("240")));
         EQUIPMENNT.put("УПП", new ArrayList<>(List.of("011")));
+        EQUIPMENNT.put("УПП1", new ArrayList<>(List.of("010","015","026","016","023")));
+        EQUIPMENNT.put("УПП7", new ArrayList<>(List.of("017","018","019","034","036","030","037","031","032")));
         EQUIPMENNT.put("УПП-18", new ArrayList<>(List.of("012","013")));
-        EQUIPMENNT.put("ОКВТ", new ArrayList<>(List.of("248", "211", "219",  "168", "249")));
+        EQUIPMENNT.put("ОКВТ", new ArrayList<>(List.of("248", "211", "219",  "168","253","216","190","189",
+                "203","148","151","154","182","184","220","151","153","183","181","209","289","200","187","254","047","057","040")));
+        EQUIPMENNT.put("ОКВА", new ArrayList<>(List.of("252","249")));
         EQUIPMENNT.put("СОКТ",new ArrayList<>(List.of( "035", "054", "055")));
-        EQUIPMENNT.put("МИТ", new ArrayList<>(List.of("025", "785", "786","024")));
+        EQUIPMENNT.put("МИТ", new ArrayList<>(List.of("025", "785", "786","042")));
+        EQUIPMENNT.put("ПУ_СМК",new ArrayList<>(List.of("024","022")));
+        EQUIPMENNT.put("КЭКМ", new ArrayList<>(List.of("295")));
         EQUIPMENNT.put("ТВКМ", new ArrayList<>(List.of("136")));
+        EQUIPMENNT.put("НСВ", new ArrayList<>(List.of("001","004","296","180")));
+        EQUIPMENNT.put("ТВКМ5000", new ArrayList<>(List.of("048","149","068")));
+        EQUIPMENNT.put("НПЭК", new ArrayList<>(List.of("126")));
+        EQUIPMENNT.put("НР4", new ArrayList<>(List.of("375")));
+        EQUIPMENNT.put("НР6", new ArrayList<>(List.of("387")));
+        EQUIPMENNT.put("ПБ15", new ArrayList<>(List.of("007","009")));
+        EQUIPMENNT.put("РПП", new ArrayList<>(List.of("002","008","013","006")));
 
 
     }
@@ -85,7 +98,6 @@ public class FilterEquipmentService {
     //Фильтрация по имени
     public void filterByName(String key, String pathExcel, String docPath, String pathDirectory, String lastName, String data) {
         try {
-            String defaultKey = "defaultKey";
             String numberInBold = CodeMapping.FOR_PATTERN_SEARCH_NUMBER.getDescription();
 
                EquipmentHandler handler = handlers.get(key);
