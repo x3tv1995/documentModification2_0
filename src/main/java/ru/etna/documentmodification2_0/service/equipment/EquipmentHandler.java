@@ -1,8 +1,9 @@
 package ru.etna.documentmodification2_0.service.equipment;
 
+import ru.etna.documentmodification2_0.dto.EquipmentProcessingRequest;
+
 public interface EquipmentHandler {
-     void handler(String pathExcel, String docPath, String pathDirectory,
-                  String lastName, String data, String numberInBold) throws Exception;
+     void handler(EquipmentProcessingRequest equipmentProcessingRequest) throws Exception;
 
 
 }

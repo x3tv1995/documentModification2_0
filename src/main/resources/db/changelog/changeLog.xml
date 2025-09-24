@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+
+    <changeSet id="1" author="Anton Dolgov">
+        <sql dbms="postgresql">
+
+
+            CREATE TABLE passports (
+                                       id BIGSERIAL PRIMARY KEY,
+                                       title VARCHAR(255),
+                                       countDoc INT NOT NULL DEFAULT 0,
+                                       date DATE,
+                                       startTime TIMESTAMP,
+                                       endTime TIMESTAMP,
+                                       durationHandler BIGINT NOT NULL DEFAULT 0,
+                                       status VARCHAR(50),
+                                       errorMessage VARCHAR(1000)
+            );
+
+            INSERT INTO passports
+            (title, countDoc, date, startTime, endTime, durationHandler, status, errorMessage)
+            VALUES
+                ('ПУ_СМК', 23, '2025-09-24', '2025-09-24 13:21:55', '2025-09-24 13:21:58', 2, 'SUCCESS', NULL),
+                ('ЭК-20000', 5, '2025-09-21', '2025-09-21 11:30:00', '2025-09-21 11:30:08', 8000, 'SUCCESS', NULL),
+                ('БРПП150', 20, '2025-09-22', '2025-09-22 09:15:00', '2025-09-22 09:16:30', 90000, 'SUCCESS', NULL),
+                ('ОРТ', 1, '2025-09-22', '2025-09-22 14:00:00', '2025-09-22 14:00:03', 3000, 'SUCCESS', NULL),
+                ('ВВЭК11400', 15, '2025-09-23', '2025-09-23 16:20:00', '2025-09-23 16:20:18', 18000, 'SUCCESS', NULL),
+                ('ЭК-20000', 8, '2025-09-23', '2025-09-23 17:10:00', '2025-09-23 17:10:10', 10000, 'SUCCESS', NULL),
+                ('БРПП150', 25, '2025-09-24', '2025-09-24 08:00:00', '2025-09-24 08:01:45', 105000, 'SUCCESS', NULL),
+                ('ОРТ', 3, '2025-09-24', '2025-09-24 12:00:00', '2025-09-24 12:00:07', 7000, 'SUCCESS', NULL),
+                ('ВВЭК11400', 12, '2025-09-24', '2025-09-24 13:45:00', '2025-09-24 13:45:14', 14000, 'FAILED', 'Ошибка в Excel-файле'),
+                ('ЭК-20000', 6, '2025-09-24', '2025-09-24 15:30:00', '2025-09-24 15:30:09', 9000, 'SUCCESS', NULL);
+        </sql>
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Топ-5 самых медленных шаблонов</title>
+    <style>
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<form th:action="@{/}" method="get">
+    <button type="submit" class="btn">Обратно</button>
+</form>
+<body>
+<h1>📊 Топ-5 самых медленных шаблонов</h1>
+<table>
+    <thead>
+    <tr>
+        <th>Название документа</th>
+        <th>Среднее время (с)</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="stat : ${templates}">
+        <td th:text="${stat[0]}">ВВЭК</td>
+        <td th:text="${#numbers.formatDecimal(stat[1], 1, 2)}">123.45</td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

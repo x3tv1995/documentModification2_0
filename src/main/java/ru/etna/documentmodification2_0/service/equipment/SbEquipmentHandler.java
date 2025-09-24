@@ -10,24 +10,22 @@ import ru.etna.documentmodification2_0.service.DocxUpdateTextService;
 import ru.etna.documentmodification2_0.service.StartupManagerService;
 import ru.etna.documentmodification2_0.service.psi.equipment.EquipmentHandlerForPsi;
 
-@Component("НСВ")
-public class NsvEquipmentHandler implements EquipmentHandler, EquipmentHandlerForPsi {
+@Component("СБ")
+public class SbEquipmentHandler implements EquipmentHandler, EquipmentHandlerForPsi {
     @Autowired
     private StartupManagerService startupManagerService;
     @Autowired
     private DocxUpdateTextService docxUpdateTextService;
-
-
     @Override
     public void handler(EquipmentProcessingRequest equipmentProcessingRequest) throws Exception {
 
-        String patternFirst = CodeMapping.NSV_PATTERN_FIRST.getDescription();
-        String patternDate = CodeMapping.NSV_PATTERN_DATE.getDescription();
-        String patternSpace = CodeMapping.NSV_PATTERN_SPACEANDSIZEWORD.getDescription();
-        String numberSearch = CodeMapping.NSV_PATTERN_NUMBER_SEARCH.getDescription();
-        String patternNumber = CodeMapping.NSV_PATTERN_NUMBER.getDescription();
-        String replaceNumber = CodeMapping.NSV_PATTERN_REPLACE_NUMBER.getDescription();
-        int fontSize = CodeMapping.NSV_PATTERN_SPACEANDSIZEWORD.getSize();
+        String patternFirst = CodeMapping.SB_PATTERN_FIRST.getDescription();
+        String patternDate = CodeMapping.SB_PATTERN_DATE.getDescription();
+        String patternSpace = CodeMapping.SB_SPACEANDSIZEWORD.getDescription();
+        String numberSearch = CodeMapping.SB_NUMBER_SEARCH.getDescription();
+        String patternNumber = CodeMapping.SB_NUMBER.getDescription();
+        String replaceNumber = CodeMapping.SB_PATTERN_REPLACE_NUMBER.getDescription();
+        int fontSize = CodeMapping.SB_SPACEANDSIZEWORD.getSize();
 
 
         DocumentReplaceRequestDTO dto = new DocumentReplaceRequestDTO(
@@ -47,11 +45,10 @@ public class NsvEquipmentHandler implements EquipmentHandler, EquipmentHandlerFo
 
         startupManagerService.enterDatabase(dto, equipmentProcessingRequest.numberInBold(),equipmentProcessingRequest.nameKey());
     }
-
     @Override
     public void handlerPsi(String lastName, XWPFDocument document, int sizeText) {
-        String patternFirst = CodeMapping.TRO_PSI_PATTERN_FIRST.getDescription();
-        String patternDate =  CodeMapping.TRO_PSI_PATTERN_DATE.getDescription();
+        String patternFirst = CodeMapping.SB_PSI_PATTERN_FIRST.getDescription();
+        String patternDate =  CodeMapping.SB_PSI_PATTERN_DATE.getDescription();
         docxUpdateTextService.searchTitleForPsi(patternFirst,lastName,patternDate,document,sizeText);
     }
 }

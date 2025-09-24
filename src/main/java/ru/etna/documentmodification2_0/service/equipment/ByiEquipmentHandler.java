@@ -4,6 +4,7 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.etna.documentmodification2_0.dto.DocumentReplaceRequestDTO;
+import ru.etna.documentmodification2_0.dto.EquipmentProcessingRequest;
 import ru.etna.documentmodification2_0.enums.CodeMapping;
 import ru.etna.documentmodification2_0.service.DocxUpdateTextService;
 import ru.etna.documentmodification2_0.service.StartupManagerService;
@@ -17,9 +18,7 @@ public class ByiEquipmentHandler implements EquipmentHandler, EquipmentHandlerFo
     private DocxUpdateTextService docxUpdateTextService;
 
     @Override
-    public void handler(String pathExcel, String docPath,
-                        String pathDirectory, String lastName,
-                        String data, String numberInBold) throws Exception {
+    public void handler(EquipmentProcessingRequest equipmentProcessingRequest) throws Exception {
 
         String patternFirst = CodeMapping.BYI_PATTERN_FIRST.getDescription();
         String patternDate = CodeMapping.BYI_PATTERN_DATE.getDescription();
@@ -31,9 +30,9 @@ public class ByiEquipmentHandler implements EquipmentHandler, EquipmentHandlerFo
 
 
         DocumentReplaceRequestDTO dto = new DocumentReplaceRequestDTO(
-                docPath,
-                lastName,
-                data,
+                equipmentProcessingRequest.docPath(),
+                equipmentProcessingRequest.lastName(),
+                equipmentProcessingRequest.data(),
                 patternFirst,
                 patternSpace,
                 numberSearch,
@@ -41,11 +40,11 @@ public class ByiEquipmentHandler implements EquipmentHandler, EquipmentHandlerFo
                 fontSize,
                 replaceNumber,
                 patternDate,
-                pathExcel,
-                pathDirectory
+                equipmentProcessingRequest.pathExcel(),
+                equipmentProcessingRequest.pathDirectory()
         );
 
-        startupManagerService.enterDatabase(dto, numberInBold);
+        startupManagerService.enterDatabase(dto, equipmentProcessingRequest.numberInBold(),equipmentProcessingRequest.nameKey());
     }
     @Override
     public void handlerPsi(String lastName, XWPFDocument document, int sizeText) {

@@ -82,7 +82,7 @@ public class DocumentService {
         logger.info("Запускаю процесс для обработки ПСИ");
         TempFilesDTO files = createTempDocxAndExcel(psiFormDto.getDocPath(),psiFormDto.getPathExcel());
 
-        psiService.fillingFirstColumnInTable(
+        psiService.fillingPsi(
                 files.getDocxPath(),
                 psiFormDto.getPathDirectory(),
                 files.getExcelPath(),

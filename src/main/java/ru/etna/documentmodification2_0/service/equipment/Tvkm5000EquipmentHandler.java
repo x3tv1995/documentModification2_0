@@ -4,6 +4,7 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.etna.documentmodification2_0.dto.DocumentReplaceRequestDTO;
+import ru.etna.documentmodification2_0.dto.EquipmentProcessingRequest;
 import ru.etna.documentmodification2_0.enums.CodeMapping;
 import ru.etna.documentmodification2_0.service.DocxUpdateTextService;
 import ru.etna.documentmodification2_0.service.StartupManagerService;
@@ -18,8 +19,7 @@ public class Tvkm5000EquipmentHandler implements EquipmentHandler, EquipmentHand
 
 
     @Override
-    public void handler(String pathExcel, String docPath, String pathDirectory,
-                        String lastName, String data, String numberInBold) throws Exception {
+    public void handler(EquipmentProcessingRequest equipmentProcessingRequest) throws Exception {
 
         String patternFirst = CodeMapping.TVKM5000_PATTERN_FIRST.getDescription();
         String patternDate = CodeMapping.TVKM5000_PATTERN_DATE.getDescription();
@@ -31,9 +31,9 @@ public class Tvkm5000EquipmentHandler implements EquipmentHandler, EquipmentHand
 
 
         DocumentReplaceRequestDTO dto = new DocumentReplaceRequestDTO(
-                docPath,
-                lastName,
-                data,
+                equipmentProcessingRequest.docPath(),
+                equipmentProcessingRequest.lastName(),
+                equipmentProcessingRequest.data(),
                 patternFirst,
                 patternSpace,
                 numberSearch,
@@ -41,11 +41,11 @@ public class Tvkm5000EquipmentHandler implements EquipmentHandler, EquipmentHand
                 fontSize,
                 replaceNumber,
                 patternDate,
-                pathExcel,
-                pathDirectory
+                equipmentProcessingRequest.pathExcel(),
+                equipmentProcessingRequest.pathDirectory()
         );
 
-        startupManagerService.enterDatabase(dto, numberInBold);
+        startupManagerService.enterDatabase(dto, equipmentProcessingRequest.numberInBold(),equipmentProcessingRequest.nameKey());
     }
 
     @Override

@@ -7,6 +7,13 @@
 </head>
 
 <body>
+<form th:action="@{/statsTop5}" method="get">
+    <button type="submit" class="btn">Статистика Топ 5</button>
+</form>
+
+<form th:action="@{/stats}" method="get">
+    <button type="submit" class="btn">Статистика</button>
+</form>
 
 <h2>1. Изменение и конвертация Word</h2>
 <form th:action="@{/processPassports}" method="post" th:object="${formPassports}" enctype="multipart/form-data">

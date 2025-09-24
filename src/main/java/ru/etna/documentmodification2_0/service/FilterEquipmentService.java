@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.etna.documentmodification2_0.dto.EquipmentProcessingRequest;
 import ru.etna.documentmodification2_0.enums.CodeMapping;
 import ru.etna.documentmodification2_0.service.equipment.EquipmentHandler;
 
@@ -30,9 +31,9 @@ public class FilterEquipmentService {
     static {
         EQUIPMENNT.put("БТР", new ArrayList<>(List.of("910")));
         EQUIPMENNT.put("ТРО", new ArrayList<>(List.of("194", "186", "147", "242",
-                "207", "186", "212", "215", "213", "202", "246", "210", "229", "214", "218")));
-        EQUIPMENNT.put("ЭК", new ArrayList<>(List.of("166", "159", "161")));
-        EQUIPMENNT.put("ЭК6500", new ArrayList<>(List.of("032", "030")));
+                "207","205", "186", "212", "215", "213", "202", "246", "210", "229", "214", "218","247","208","224")));
+        EQUIPMENNT.put("ЭК20000", new ArrayList<>(List.of( "161","159","166")));
+        EQUIPMENNT.put("ЭК6500", new ArrayList<>(List.of("032", "030","033")));
         EQUIPMENNT.put("ОРТ", new ArrayList<>(List.of("162")));
         EQUIPMENNT.put("ВВЭК", new ArrayList<>(List.of("160", "165","158")));
         EQUIPMENNT.put("ВВЭК24000", new ArrayList<>(List.of( "121")));
@@ -45,7 +46,7 @@ public class FilterEquipmentService {
         EQUIPMENNT.put("БТР28Д", new ArrayList<>(List.of("895")));
         EQUIPMENNT.put("БТР4ДЛ", new ArrayList<>(List.of("382","491","374","328")));
         EQUIPMENNT.put("БТР12Д", new ArrayList<>(List.of("393")));
-        EQUIPMENNT.put("БТР14", new ArrayList<>(List.of("415","660","534","520","559","576")));
+        EQUIPMENNT.put("БТР14", new ArrayList<>(List.of("415","660","534","520","559","576","002")));
         EQUIPMENNT.put("БТР26", new ArrayList<>(List.of("765")));
         EQUIPMENNT.put("БТР27ГЛ", new ArrayList<>(List.of("839","895",  "002")));
         EQUIPMENNT.put("БУИ", new ArrayList<>(List.of("240")));
@@ -56,18 +57,20 @@ public class FilterEquipmentService {
         EQUIPMENNT.put("ОКВТ", new ArrayList<>(List.of("248", "211", "219",  "168","253","216","190","189",
                 "203","148","151","154","182","184","220","151","153","183","181","209","289","200","187","254","047","057","040")));
         EQUIPMENNT.put("ОКВА", new ArrayList<>(List.of("252","249")));
-        EQUIPMENNT.put("СОКТ",new ArrayList<>(List.of( "035", "054", "055")));
+        EQUIPMENNT.put("СОКТ",new ArrayList<>(List.of( "035", "054", "055","049")));
         EQUIPMENNT.put("МИТ", new ArrayList<>(List.of("025", "785", "786","042")));
         EQUIPMENNT.put("ПУ_СМК",new ArrayList<>(List.of("024","022")));
         EQUIPMENNT.put("КЭКМ", new ArrayList<>(List.of("295")));
         EQUIPMENNT.put("ТВКМ", new ArrayList<>(List.of("136")));
         EQUIPMENNT.put("НСВ", new ArrayList<>(List.of("001","004","296","180")));
         EQUIPMENNT.put("ТВКМ5000", new ArrayList<>(List.of("048","149","068")));
+        EQUIPMENNT.put("СБ", new ArrayList<>(List.of("307","081")));
         EQUIPMENNT.put("НПЭК", new ArrayList<>(List.of("126")));
         EQUIPMENNT.put("НР4", new ArrayList<>(List.of("375")));
         EQUIPMENNT.put("НР6", new ArrayList<>(List.of("387")));
         EQUIPMENNT.put("ПБ15", new ArrayList<>(List.of("007","009")));
-        EQUIPMENNT.put("РПП", new ArrayList<>(List.of("002","008","013","006")));
+        EQUIPMENNT.put("РПП", new ArrayList<>(List.of("008","013","006")));
+
 
 
     }
@@ -101,8 +104,12 @@ public class FilterEquipmentService {
             String numberInBold = CodeMapping.FOR_PATTERN_SEARCH_NUMBER.getDescription();
 
                EquipmentHandler handler = handlers.get(key);
+            if (handler == null) {
+                handler = handlers.get("defaultKey");
+            }
                logger.info(" В МЕТОДЕ filterbyName "+ handler);
-                   handler.handler(pathExcel, docPath, pathDirectory, lastName, data, numberInBold);
+            EquipmentProcessingRequest equipmentProcessingRequest = new EquipmentProcessingRequest(pathExcel, docPath, pathDirectory, lastName, data, numberInBold,key);
+                   handler.handler(equipmentProcessingRequest);
 
         } catch (IOException e) {
             logger.error("Ошибка при выполнении enterDatabase: {}", e.getMessage());

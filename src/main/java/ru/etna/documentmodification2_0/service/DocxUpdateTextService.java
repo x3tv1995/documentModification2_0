@@ -3,15 +3,17 @@ package ru.etna.documentmodification2_0.service;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.etna.documentmodification2_0.dto.DocumentReplaceRequestDTO;
 
-import java.io.FileInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,10 +26,65 @@ import java.util.regex.Pattern;
 @Service
 public class DocxUpdateTextService {
     private final Logger logger = LoggerFactory.getLogger(DocxUpdateTextService.class);
+    @Autowired
+    ConvertorService convertorService;
 
+    public  void processSingleNumber(byte[] templateBytes,
+                                     DocumentReplaceRequestDTO requestDTO,
+                                     String number,
+                                     String numberInBold,
+                                     String outputDir
+    ) {
+      try (XWPFDocument document = new XWPFDocument(new ByteArrayInputStream(templateBytes))){
+          if (requestDTO.getData().isEmpty()) {
+              replaceWordInFileNoDate(document, requestDTO, number);
+          } else {
+              replaceWordInFile(document, requestDTO, number);
+          }
+          numbersInBold(document,numberInBold,requestDTO.getFontSize());
 
-    public void replaceWordInFile(DocumentReplaceRequestDTO documentReplaceRequestDTO, String number) {
-        String docPath = documentReplaceRequestDTO.getDocPath();
+          String tempDocx = "temp"+ number+".docx";
+          Path tempDocxPath = Paths.get(outputDir,tempDocx);
+
+          try (FileOutputStream fos = new FileOutputStream(tempDocxPath.toFile())) {
+              document.write(fos);
+          }
+          convertorService.convertorDocToPdf(tempDocxPath.toString(), outputDir,number);
+          Files.deleteIfExists(tempDocxPath);
+      }catch(Exception e){
+          throw new RuntimeException("Ошибка при обработке номера " + number, e);
+      }
+
+    }
+
+    public  void processDefaultSingleNumber(byte[] templateBytes,
+                                     DocumentReplaceRequestDTO requestDTO,
+                                     String number,
+                                     String numberInBold,
+                                     String outputDir
+    ) {
+        try (XWPFDocument document = new XWPFDocument(new ByteArrayInputStream(templateBytes))){
+           replaceInFileOnlyNumber(document, requestDTO, number);
+            numbersInBold(document,numberInBold,requestDTO.getFontSize());
+
+            String tempDocx = "temp"+ number+".docx";
+            Path tempDocxPath = Paths.get(outputDir,tempDocx);
+
+            try (FileOutputStream fos = new FileOutputStream(tempDocxPath.toFile())) {
+                document.write(fos);
+            }
+            convertorService.convertorDocToPdf(tempDocxPath.toString(), outputDir,number);
+            Files.deleteIfExists(tempDocxPath);
+        }catch(Exception e){
+            throw new RuntimeException("Ошибка при обработке номера " + number, e);
+        }
+
+    }
+
+  //замена  данных   номера продукции , фио, дату, представитель отк
+    public void replaceWordInFile(XWPFDocument document,
+                                  DocumentReplaceRequestDTO documentReplaceRequestDTO,
+                                  String number) {
         String patternNumber = documentReplaceRequestDTO.getPatternNumber();
         String numberSearch = documentReplaceRequestDTO.getNumberSearch();
         int sizeText = documentReplaceRequestDTO.getFontSize();
@@ -36,26 +93,15 @@ public class DocxUpdateTextService {
         String patternSpace = documentReplaceRequestDTO.getPatternSpace();
         String data = documentReplaceRequestDTO.getData();
 
+        boolean otkReplaced = false;
+        boolean numberReplaced = false;
+        boolean startProcessing = false;
 
-        try (FileInputStream fis = new FileInputStream(docPath);
-             XWPFDocument document = new XWPFDocument(fis)) {
-//        try {
-//
-//            documentCacheService.templateLoad(docPath);
-//            XWPFDocument document = documentCacheService.getCachedDocTemplate();
-            boolean otkReplaced = false;
-            boolean numberReplaced = false;
-            boolean startProcessing = false;
+
+
+
 
             for (XWPFParagraph paragraph : document.getParagraphs()) {
-
-
-
-
-
-
-
-
 
 
                 List<XWPFRun> runs = paragraph.getRuns();
@@ -69,7 +115,7 @@ public class DocxUpdateTextService {
                     }
                 }
 
-               String fullText = paragraphText.toString();
+                String fullText = paragraphText.toString();
                 // ищем ключевую фразу
                 if (!startProcessing && fullText.contains("СВИДЕТЕЛЬСТВО О ПРИЁМКЕ")) {
                     startProcessing = true;
@@ -99,31 +145,23 @@ public class DocxUpdateTextService {
                 }
 
             }
-            try (FileOutputStream fos = new FileOutputStream(docPath)) {
-                document.write(fos);
-            }
 
-        } catch (IOException e) {
-            throw new RuntimeException("Ошибка: " + e.getMessage());
 
-        }
+
     }
 
-
-    public void replaceWordInFileOnlyNumber(DocumentReplaceRequestDTO documentReplaceRequestDTO, String number) {
-        String docPath = documentReplaceRequestDTO.getDocPath();
+   // замена в файле только номера
+    public void replaceInFileOnlyNumber(XWPFDocument document,
+                                        DocumentReplaceRequestDTO documentReplaceRequestDTO,
+                                        String number) {
+//        String docPath = documentReplaceRequestDTO.getDocPath();
         String patternNumber = documentReplaceRequestDTO.getPatternNumber();
         String numberSearch = documentReplaceRequestDTO.getNumberSearch();
         int sizeText = documentReplaceRequestDTO.getFontSize();
+        boolean numberReplaced = false;
+        boolean startProcessing = false;
 
-        try (FileInputStream fis = new FileInputStream(docPath);
-             XWPFDocument document = new XWPFDocument(fis)) {
-//        try {
-//
-//            documentCacheService.templateLoad(docPath);
-//            XWPFDocument document = documentCacheService.getCachedDocTemplate();
-            boolean numberReplaced = false;
-            boolean startProcessing = false;
+
             for (XWPFParagraph paragraph : document.getParagraphs()) {
 
 
@@ -161,81 +199,67 @@ public class DocxUpdateTextService {
                 }
 
             }
-            try (FileOutputStream fos = new FileOutputStream(docPath)) {
-                document.write(fos);
-            }
 
-        } catch (IOException e) {
-            throw new RuntimeException("Ошибка: " + e.getMessage());
-        }
     }
 
 
-    public void replaceWordInFileReplay(DocumentReplaceRequestDTO documentReplaceRequestDTO, String number) {
-        String docPath = documentReplaceRequestDTO.getDocPath();
-        String patternNumber = documentReplaceRequestDTO.getPatternNumber();
-        int sizeText = documentReplaceRequestDTO.getFontSize();
-        String replaceNumber = documentReplaceRequestDTO.getReplaceNumber();
-        logger.info("Зашёл для работы");
-
-        try (FileInputStream fis = new FileInputStream(docPath);
-             XWPFDocument document = new XWPFDocument(fis)) {
-//        try {
+//    public void replaceWordInFileReplay(XWPFDocument document,
+//                                        DocumentReplaceRequestDTO documentReplaceRequestDTO,
+//                                        String number) {
 //
-//            documentCacheService.templateLoad(docPath);
-//            XWPFDocument document = documentCacheService.getCachedDocTemplate();
-            boolean numberReplaced = false;
-            boolean startProcessing = false;
-            for (XWPFParagraph paragraph : document.getParagraphs()) {
+//        String patternNumber = documentReplaceRequestDTO.getPatternNumber();
+//        int sizeText = documentReplaceRequestDTO.getFontSize();
+//        String replaceNumber = documentReplaceRequestDTO.getReplaceNumber();
+//        logger.info("Зашёл для работы");
+//
+//
+//            boolean numberReplaced = false;
+//            boolean startProcessing = false;
+//            for (XWPFParagraph paragraph : document.getParagraphs()) {
+//
+//                List<XWPFRun> runs = paragraph.getRuns();
+//                StringBuilder paragraphText = new StringBuilder(); // Собираем текст параграфа
+//
+//                for (XWPFRun run : runs) {
+//                    String text = run.getText(0);
+//                    if (text != null) {
+//                        paragraphText.append(text);
+//                    }
+//                }
+//
+//                String fullText = paragraphText.toString();
+//                // ищу ключевую фразу
+//                if (!startProcessing && fullText.contains("СВИДЕТЕЛЬСТВО О ПРИЁМКЕ")) {
+//                    startProcessing = true;
+//                }
+//
+//                if (!startProcessing) {
+//                    continue; //пропускаю обработку
+//                }
+//                if (numberReplaced) break;
+//
+//                logger.info("Заводской №: " + numberReplaced + " == True значит номер поменял ");
+//                logger.info(fullText);
+//
+//                if (!numberReplaced) {
+//                    String newText = patternNumber + number;
+//                    numberReplaced = replaceInParagraph(paragraph, fullText, replaceNumber, newText, sizeText);
+//                    logger.info("ЗАМЕНИЛ!!!!");
+//                }
+//
+//            }
+//
+//
+//
+//    }
 
-                List<XWPFRun> runs = paragraph.getRuns();
-                StringBuilder paragraphText = new StringBuilder(); // Собираем текст параграфа
-
-                for (XWPFRun run : runs) {
-                    String text = run.getText(0);
-                    if (text != null) {
-                        paragraphText.append(text);
-                    }
-                }
-
-                String fullText = paragraphText.toString();
-                // ищем ключевую фразу
-                if (!startProcessing && fullText.contains("СВИДЕТЕЛЬСТВО О ПРИЁМКЕ")) {
-                    startProcessing = true;
-                }
-
-                if (!startProcessing) {
-                    continue; //пропускаю обработку
-                }
-                if (numberReplaced) break;
-
-                logger.info("Заводской №: " + numberReplaced + " == True значит номер поменял ");
-                logger.info(fullText);
-
-                if (!numberReplaced) {
-                    String newText = patternNumber + number;
-                    numberReplaced = replaceInParagraph(paragraph, fullText, replaceNumber, newText, sizeText);
-                    logger.info("ЗАМЕНИЛ!!!!");
-                }
-
-            }
-            try (FileOutputStream fos = new FileOutputStream(docPath)) {
-                document.write(fos);
-            }
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-
-    }
-
-    // добавил метод
-    public void numbersInBold(String docPath, String replaceNumber, int size) {
+    // выделение жирным шрифтом  номера продукции
+    public void numbersInBold(XWPFDocument document,
+                              String replaceNumber,
+                              int size) {
         logger.info("Зашёл для работы");
 
-        try (FileInputStream fis = new FileInputStream(docPath);
-             XWPFDocument document = new XWPFDocument(fis)) {
+
 
             boolean numberReplaced = false;
             boolean startProcessing = false;
@@ -257,7 +281,7 @@ public class DocxUpdateTextService {
                 String fullText = fullTextBuilder.toString();
                 logger.info("Полный текст параграфа: " + fullText);
 
-                // ищем ключевую фразу
+                // ищу ключевую фразу
                 if (!startProcessing && fullText.contains("СВИДЕТЕЛЬСТВО О ПРИЁМКЕ")) {
                     startProcessing = true;
                 }
@@ -311,18 +335,14 @@ public class DocxUpdateTextService {
             }
 
 
-            try (FileOutputStream fos = new FileOutputStream(docPath)) {
-                document.write(fos);
-            }
 
-        } catch (Exception e) {
-            throw new RuntimeException("Ошибка при обработке документа", e);
-        }
     }
 
-
-    public void replaceWordInFileNoDate(DocumentReplaceRequestDTO documentReplaceRequestDTO, String number) {
-        String docPath = documentReplaceRequestDTO.getDocPath();
+// замена данных без даты
+    public void replaceWordInFileNoDate(XWPFDocument document,
+                                        DocumentReplaceRequestDTO documentReplaceRequestDTO,
+                                        String number) {
+//        String docPath = documentReplaceRequestDTO.getDocPath();
         String patternNumber = documentReplaceRequestDTO.getPatternNumber();
         String numberSearch = documentReplaceRequestDTO.getNumberSearch();
         int sizeText = documentReplaceRequestDTO.getFontSize();
@@ -330,12 +350,7 @@ public class DocxUpdateTextService {
         String lastName = documentReplaceRequestDTO.getLastName();
         String patterDate = documentReplaceRequestDTO.getPatterDate();
 
-        try (FileInputStream fis = new FileInputStream(docPath);
-             XWPFDocument document = new XWPFDocument(fis)) {
-//        try {
-//
-//            documentCacheService.templateLoad(docPath);
-//            XWPFDocument document = documentCacheService.getCachedDocTemplate();
+
             boolean otkReplaced = false;
             boolean numberReplaced = false;
             boolean startProcessing = false;
@@ -381,17 +396,14 @@ public class DocxUpdateTextService {
 
 
             }
-            try (FileOutputStream fos = new FileOutputStream(docPath)) {
-                document.write(fos);
-            }
 
-        } catch (IOException e) {
-            throw new RuntimeException("Ошибка" + e.getMessage());
-        }
     }
-
+        //поиска по шаблону для заполнения строки Представитель ОТК
     public void searchTitleForPsi(String patternFirst,
-                                  String lastName, String patterDate, XWPFDocument document, int sizeText) {
+                                  String lastName,
+                                  String patterDate,
+                                  XWPFDocument document,
+                                  int sizeText) {
         boolean otkReplaced = false;
         for (XWPFParagraph paragraph : document.getParagraphs()) {
             if (otkReplaced) {
@@ -422,14 +434,18 @@ public class DocxUpdateTextService {
         }
     }
 
+
     //замена текста
-    private boolean replaceInParagraph(XWPFParagraph paragraph, String fullText,
-                                       String pattern, String replacement, int fontSize) {
+    public boolean replaceInParagraph(XWPFParagraph paragraph,
+                                      String fullText,
+                                      String pattern,
+                                      String replacement,
+                                      int fontSize) {
         Pattern p = Pattern.compile(pattern);
         Matcher m = p.matcher(fullText);
         if (m.find()) {
             String newText = m.replaceAll(replacement);
-            
+
             while (!paragraph.getRuns().isEmpty()) {
                 paragraph.removeRun(0);
             }

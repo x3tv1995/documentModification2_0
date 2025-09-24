@@ -152,12 +152,19 @@ public enum CodeMapping {
     OKVA_NUMBER(" № ", 10),
     OKVA_PATTERN_REPLACE_NUMBER("№\\s*[A-Za-z0-9]{9}", 10),
 
-    SOKT_PATTERN_FIRST("Представитель ОТК _____________      ", 10),
-    SOKT_PATTERN_DATE("                          ______", 10),
+    SOKT_PATTERN_FIRST("Представитель ОТК ______________       ", 10),
+    SOKT_PATTERN_DATE("                           ______", 10),
     SOKT_SPACEANDSIZEWORD("                       ", 10),
     SOKT_NUMBER_SEARCH("№\\s*_+\\s*", 10),
     SOKT_NUMBER("№ ", 10),
     SOKT_PATTERN_REPLACE_NUMBER("№\\s*[A-Za-z0-9]{9}", 10),
+
+    SB_PATTERN_FIRST("Представитель ОТК _____________      ", 10),
+    SB_PATTERN_DATE("             ______", 10),
+    SB_SPACEANDSIZEWORD("          ", 10),
+    SB_NUMBER_SEARCH("№\\s*_+\\s*", 10),
+    SB_NUMBER("№ ", 10),
+    SB_PATTERN_REPLACE_NUMBER("№\\s*[A-Za-z0-9]{9}", 10),
 
 
     PB_PATTERN_FIRST("Представитель ОТК   _______________   ", 10),
@@ -236,6 +243,33 @@ public enum CodeMapping {
     SOKT_PSI_PATTERN_DATE("                               ________", 10),
     SOKT_PSI_SPACEANDSIZEWORD("          ", 10),
 
+    SB_PSI_PATTERN_FIRST("Представитель ОТК   __________________                 ", 10),
+    SB_PSI_PATTERN_DATE("                            ________", 10),
+    SB_PSI_SPACEANDSIZEWORD("          ", 10),
+
+
+    VVEK_PSI_PATTERN_FIRST("Представитель ОТК    ________________                         ", 10),
+    VVEK_PSI_PATTERN_DATE("                          ___________", 10),
+    VVEK_PSI_SPACEANDSIZEWORD("          ", 10),
+    VVEK_PSI_PATTERN_NUMBER_SEARCH("\\s*зав.\\s*№\\s*_+\\s*", 10),
+    VVEK_PSI_PATTERN_NUMBER(" зав. № ", 10),
+    VVEK_PSI_PATTERN_REPLACE_NUMBER("\\s*зав.\\s*№\\s*[A-Za-z0-9]{9}", 10),
+
+    EK_PSI_PATTERN_FIRST("Представитель ОТК    ________________                         ", 10),
+    EK_PSI_PATTERN_DATE("                          ___________", 10),
+    EK_PSI_SPACEANDSIZEWORD("          ", 10),
+    EK_PSI_PATTERN_NUMBER_SEARCH(" зав. № ", 10),
+    EK_PSI_PATTERN_NUMBER(" зав. № ", 10),
+    EK_PSI_PATTERN_REPLACE_NUMBER("\\s*зав.\\s*№\\s*[A-Za-z0-9]{9}", 10),
+
+
+    EK6500_PSI_PATTERN_FIRST("Представитель ОТК    __________________                                            ", 10),
+    EK6500_PSI_PATTERN_DATE("                          ___________", 10),
+    EK6500_PSI_SPACEANDSIZEWORD("          ", 10),
+    EK6500_PSI_PATTERN_NUMBER_SEARCH(" зав. № ", 10),
+    EK6500_PSI_PATTERN_NUMBER(" зав. № ", 10),
+    EK6500_PSI_PATTERN_REPLACE_NUMBER("\\s*зав.\\s*№\\s*[A-Za-z0-9]{9}", 10),
+
     ORT_PSI_PATTERN_FIRST("Представитель ОТК   __________________                    ", 10),
     ORT_PSI_PATTERN_DATE("                      _______", 10),
     ORT_PSI_SPACEANDSIZEWORD("             ", 10),
@@ -277,12 +311,19 @@ public enum CodeMapping {
     VVEK11400_PATTERN_NUMBER(" заводской № ", 10),
     VVEK11400_PATTERN_REPLACE_NUMBER("\\s*заводской\\s*№\\s*[A-Za-z0-9]{9}", 10),
 
-    EK_PATTERN_FIRST(" Представитель ОТК   ________________                ", 10),
+    EK_PATTERN_FIRST("Представитель ОТК [ _]+", 10),
     EK_PATTERN_DATE("                    ______", 10),
     EK_PATTERN_SPACEANDSIZEWORD("                   ", 10),
     EK_PATTERN_NUMBER_SEARCH("\\s*заводской\\s*№\\s*_+\\s*", 10),
     EK_PATTERN_NUMBER(" заводской № ", 10),
     EK_PATTERN_REPLACE_NUMBER("\\s*заводской\\s*№\\s*[A-Za-z0-9]{9}", 10),
+
+    EK20000_PATTERN_FIRST(" Представитель ОТК   ________________       ", 10),
+    EK20000_PATTERN_DATE("                  ______", 10),
+    EK20000_PATTERN_SPACEANDSIZEWORD("                 ", 10),
+    EK20000_PATTERN_NUMBER_SEARCH("\\s*заводской\\s*№\\s*_+\\s*", 10),
+    EK20000_PATTERN_NUMBER(" заводской № ", 10),
+    EK20000_PATTERN_REPLACE_NUMBER("\\s*заводской\\s*№\\s*[A-Za-z0-9]{9}", 10),
 
 
     TVKM_PATTERN_FIRST(" Представитель ОТК   ________________          ", 10),
@@ -293,8 +334,8 @@ public enum CodeMapping {
     TVKM_PATTERN_REPLACE_NUMBER("\\s*заводской\\s*№\\s*[A-Za-z0-9]{9}", 10),
 
 
-    EK6500_PATTERN_FIRST(" Представитель ОТК   ________________              ", 10),
-    EK6500_PATTERN_DATE("                      ______", 10),
+    EK6500_PATTERN_FIRST(" Представитель ОТК   ________________      ", 10),
+    EK6500_PATTERN_DATE("                   ______", 10),
     EK6500_PATTERN_SPACEANDSIZEWORD("                 ", 10),
     EK6500_PATTERN_NUMBER_SEARCH("\\s*заводской\\s*№\\s*_+\\s*", 10),
     EK6500_PATTERN_NUMBER(" заводской № ", 10),

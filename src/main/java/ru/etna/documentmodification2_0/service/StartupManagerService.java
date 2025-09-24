@@ -5,9 +5,22 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.etna.documentmodification2_0.dto.DocumentReplaceRequestDTO;
+import ru.etna.documentmodification2_0.dto.EquipmentProcessingRequest;
+import ru.etna.documentmodification2_0.entity.StatisticsDocHandler;
+import ru.etna.documentmodification2_0.repository.StatsRepository;
+import ru.etna.documentmodification2_0.service.equipment.EquipmentHandler;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+
 /***
  * Автор: Антон Долгов
  * Дата создания 16.06.2025
@@ -15,19 +28,97 @@ import java.util.List;
  */
 @Service
 public class StartupManagerService {
-    @Autowired
-    private ConvertorService convertorService;
+
     @Autowired
     private DocxUpdateTextService docxUpdateTextService;
     @Autowired
     private NumberProductionService numberProductionService;
     private static final Logger log = LoggerFactory.getLogger(StartupManagerService.class);
+    @Autowired
+    private StatsRepository statsRepository;
 
-    //ВНИМАТЕЛЬНО ПОСМОТРЕТЬ НОВЫЕ ДАННЫЕ ПО ДОБАВЛЕНИЮ ШАБЛОН СТРОК и т.д.
-    //добавил метод   docxUpdateTextService.numbersInBold(docPath,numberInBold) и переменную  String numberInBold
-    public void enterDatabase(DocumentReplaceRequestDTO documentReplaceRequestDTO, String numberInBold) throws Exception {
+
+
+
+    public void enterDatabase(DocumentReplaceRequestDTO documentReplaceRequestDTO,
+                              String numberInBold, String keyProduction) throws Exception {
+
         String docPath = documentReplaceRequestDTO.getDocPath();
-        int sizeText = documentReplaceRequestDTO.getFontSize();
+        String pathExcel = documentReplaceRequestDTO.getPathExcel();
+        String pathDirectory = documentReplaceRequestDTO.getPathDirectory();
+
+        LocalDateTime  localStartTime = LocalDateTime.now(); // время начало для статистики в бд
+        long startTime = System.currentTimeMillis(); // время начало для статистики в бд
+
+
+        List<String> listNumbersProduction = numberProductionService.numberProductionFromExcelInArray(pathExcel, 0, 0);
+
+
+        StatisticsDocHandler statisticsDocHandler = new StatisticsDocHandler(); //объект для сбора статистики
+        statisticsDocHandler.setCountDoc(listNumbersProduction.size());
+        statisticsDocHandler.setDate(LocalDateTime.now().toLocalDate());
+        statisticsDocHandler.setTitle(keyProduction);
+
+
+        File docFile = new File(String.valueOf(docPath));
+        if (!docFile.exists()) {
+            log.error("Ошибка: Файл input.docx не найден по пути:{}", docPath);
+            return;
+        }
+
+
+        byte[] templateBytes;
+        try (FileInputStream fis = new FileInputStream(docFile);
+             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+            byte[] buffer = new byte[8192];
+            int bytesRead;
+            while ((bytesRead = fis.read(buffer)) != -1) {
+                byteArrayOutputStream.write(buffer, 0, bytesRead);
+            }
+            templateBytes = byteArrayOutputStream.toByteArray();
+        }
+        int threadCount= Math.min(listNumbersProduction.size(), Runtime.getRuntime().availableProcessors());
+        ExecutorService threadPool = Executors.newFixedThreadPool(threadCount);
+
+        try {
+            statisticsDocHandler.setStartTime(localStartTime);
+
+            List<CompletableFuture<Void>> completableFutures = new ArrayList<>();
+
+            for (String number : listNumbersProduction) {
+               CompletableFuture<Void> completableFuture = CompletableFuture.runAsync(() -> {
+                   try{
+                          docxUpdateTextService.processSingleNumber(templateBytes,
+                                  documentReplaceRequestDTO, number, numberInBold, pathDirectory);
+
+
+                   }catch (Exception e){
+                       statisticsDocHandler.setStatus("FAILED");
+                       statisticsDocHandler.setErrorMessage(e.getMessage());
+                       log.error(" Ошибка при обработке номера: " + number, e);
+                       throw new RuntimeException(e);
+                   }
+               }, threadPool);
+               completableFutures.add(completableFuture);
+            }
+            CompletableFuture.allOf(completableFutures.toArray(new CompletableFuture[0])).join();
+        }finally {
+            threadPool.shutdown();
+            Thread.currentThread().interrupt();
+        }
+        long endTime = System.currentTimeMillis(); //  время окончания обработки для статистики в бд
+        LocalDateTime localEndTime = LocalDateTime.now(); // дата и время для статистики в бд
+
+        statisticsDocHandler.setEndTime(localEndTime);
+        statisticsDocHandler.setDurationHandler((endTime - startTime)/1000);
+        log.info(" Обработка {} номеров завершена.", listNumbersProduction.size());
+        statisticsDocHandler.setStatus("SUCCESS");
+        statsRepository.save(statisticsDocHandler);
+    }
+
+    public void enterDatabaseDefault(DocumentReplaceRequestDTO documentReplaceRequestDTO,
+                              String numberInBold) throws Exception {
+        String docPath = documentReplaceRequestDTO.getDocPath();
         String data = documentReplaceRequestDTO.getData();
         String pathExcel = documentReplaceRequestDTO.getPathExcel();
         String pathDirectory = documentReplaceRequestDTO.getPathDirectory();
@@ -39,67 +130,42 @@ public class StartupManagerService {
             log.error("Ошибка: Файл input.docx не найден по пути:{}", docPath);
             return;
         }
+        byte[] templateBytes;
+        try (FileInputStream fis = new FileInputStream(docFile);
+             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+            byte[] buffer = new byte[8192];
+            int bytesRead;
+            while ((bytesRead = fis.read(buffer)) != -1) {
+                byteArrayOutputStream.write(buffer, 0, bytesRead);
+            }
+            templateBytes = byteArrayOutputStream.toByteArray();
+        }
+        int threadCount= Math.min(arr.size(), Runtime.getRuntime().availableProcessors());
+        ExecutorService threadPool = Executors.newFixedThreadPool(threadCount);
 
-
-        boolean firstIteration  = true;
-        if (!data.isEmpty()) {
+        try {
+            List<CompletableFuture<Void>> completableFutures = new ArrayList<>();
 
             for (String number : arr) {
-                if (firstIteration) {
-                    docxUpdateTextService.replaceWordInFile(documentReplaceRequestDTO,number);
-                    docxUpdateTextService.numbersInBold(docPath,numberInBold,sizeText);
-                    convertorService.convertorDocToPdf(docPath, pathDirectory);
-                    firstIteration = false;
-                } else {
-                    docxUpdateTextService.replaceWordInFileReplay(documentReplaceRequestDTO,number);
-                    docxUpdateTextService.numbersInBold(docPath,numberInBold,sizeText);
-                    convertorService.convertorDocToPdf(docPath, pathDirectory);
-                }
-            }
+                CompletableFuture<Void> completableFuture = CompletableFuture.runAsync(() -> {
+                    try{
+                        docxUpdateTextService.processDefaultSingleNumber(templateBytes,
+                                documentReplaceRequestDTO, number, numberInBold, pathDirectory);
 
-        } else {
-            for (String number : arr) {
-                if (firstIteration) {
-                    docxUpdateTextService.replaceWordInFileNoDate(documentReplaceRequestDTO,number);
-                    docxUpdateTextService.numbersInBold(docPath,numberInBold,sizeText);
-                    convertorService.convertorDocToPdf(docPath, pathDirectory);
-                    firstIteration = false;
-                } else {
-                    docxUpdateTextService.replaceWordInFileReplay(documentReplaceRequestDTO,number);
-                    docxUpdateTextService.numbersInBold(docPath,numberInBold,sizeText);
-                    convertorService.convertorDocToPdf(docPath, pathDirectory);
-                }
-            }
 
+                    }catch (Exception e){
+                        log.error(" Ошибка при обработке номера: " + number, e);
+                        throw new RuntimeException(e);
+                    }
+                }, threadPool);
+                completableFutures.add(completableFuture);
+            }
+            CompletableFuture.allOf(completableFutures.toArray(new CompletableFuture[0])).join();
+        }finally {
+            threadPool.shutdown();
+            Thread.currentThread().interrupt();
         }
+
+        log.info(" Обработка {} номеров завершена.", arr.size());
     }
-
-    public void enterDatabaseDefault(DocumentReplaceRequestDTO documentReplaceRequestDTO,String numberInBold) throws Exception {
-        String docPath = documentReplaceRequestDTO.getDocPath();
-        int sizeText = documentReplaceRequestDTO.getFontSize();
-        String pathExcel = documentReplaceRequestDTO.getPathExcel();
-        String pathDirectory = documentReplaceRequestDTO.getPathDirectory();
-
-        List<String> arr = numberProductionService.numberProductionFromExcelInArray(pathExcel, 0, 0);
-        boolean firstIteration  = true;
-        for (String number : arr) {
-            try {
-                if (firstIteration) {
-                    docxUpdateTextService.replaceWordInFileOnlyNumber(documentReplaceRequestDTO,number);
-                    docxUpdateTextService.numbersInBold(docPath,numberInBold,sizeText);
-                    firstIteration = false;
-                } else {
-                    docxUpdateTextService.replaceWordInFileReplay(documentReplaceRequestDTO,number);
-                    docxUpdateTextService.numbersInBold(docPath,numberInBold,sizeText);
-                }
-                convertorService.convertorDocToPdf(docPath, pathDirectory);
-
-            } catch (Exception e) {
-                log.error("Error processing number: " + number, e);
-                throw new Exception("Ошибка обработки номера " + number + ": " + e.getMessage(), e);
-            }
-        }
-    }
-
-
 }

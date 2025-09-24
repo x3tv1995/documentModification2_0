@@ -6,19 +6,22 @@ import org.jodconverter.core.document.DefaultDocumentFormatRegistry;
 import org.jodconverter.core.document.DocumentFormat;
 import org.jodconverter.core.document.DocumentFormatRegistry;
 import org.jodconverter.core.office.OfficeException;
+import org.jodconverter.core.office.OfficeManager;
 import org.jodconverter.local.LocalConverter;
-import org.jodconverter.local.office.LocalOfficeManager;
+
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.UUID;
+
 
 
 /***
@@ -30,15 +33,21 @@ import java.util.UUID;
 @Service
 public class ConvertorService {
     private final Logger logger = LoggerFactory.getLogger(ConvertorService.class);
+    OfficeManager officeManager;
 
-    public void convertorDocToPdf(String docPath, String pdfPath) throws OfficeException, IOException {
+
+    public ConvertorService(OfficeManager officeManager) {
+        this.officeManager = officeManager;
+    }
+
+    public void convertorDocToPdf(String docPath, String pdfPath,String number) throws OfficeException, IOException {
         File inputFile = new File(docPath);
 
         if (pdfPath == null || pdfPath.isEmpty()) {
             logger.error("Ошибка:  неверный путь для сохранения PDF файла:{}", pdfPath);
             throw new IOException("Укажите корректный путь для сохранения PDF");
         }
-        String name = UUID.randomUUID() + ".pdf";
+        String name = number + ".pdf";
         File outputFolder = new File(pdfPath);
         File outputFile = new File(outputFolder, name);
 
@@ -59,12 +68,6 @@ public class ConvertorService {
 
         }
 
-        LocalOfficeManager officeManager = LocalOfficeManager.builder()
-                .officeHome(officeHome)
-                .build();
-
-        try {
-            officeManager.start();
             DocumentFormatRegistry registry = DefaultDocumentFormatRegistry.getInstance();
             DocumentFormat docxFormat = registry.getFormatByExtension("docx");
             DocumentFormat pdfFormat = registry.getFormatByExtension("pdf");
@@ -81,18 +84,15 @@ public class ConvertorService {
             }
 
 
-            LocalConverter.make(officeManager).convert(inputFile).as(pdfFormat).to(outputFile).execute();
+            LocalConverter.make(officeManager)
+                    .convert(inputFile)
+                    .as(pdfFormat)
+                    .to(outputFile)
+                    .execute();
 
             logger.info("Конвертация выполнена успешно!");
 
-        } catch (OfficeException e) {
-            logger.error("Ошибка при работе с LibreOffice{}", e.getMessage());
-            throw new RuntimeException("Ошибка при работе с LibreOffice: " + e.getMessage());
-        } finally {
-            if (officeManager.isRunning()) {
-                officeManager.stop();
-            }
-        }
+
     }
 
     private File findLibreOfficePath() {
@@ -113,39 +113,39 @@ public class ConvertorService {
 
         return null;
     }
-
-    public void convertFromStreamToPdf(ByteArrayOutputStream docxStream, String outputPdfPath) throws IOException, OfficeException {
-        LocalOfficeManager officeManager = LocalOfficeManager.builder()
-                .install()
-                .build();
-
+    public void convertFromStreamToPdf(ByteArrayOutputStream docxStream, String outputPdfPath) throws IOException {
+        File outputFile = new File(outputPdfPath);
         File outputFolder = new File(outputPdfPath).getParentFile();
-        if (!outputFolder.exists()) {
-            logger.error("папки не существует");
-            throw new RuntimeException("папки не существует");
+        if (!outputFolder.exists() && !outputFolder.mkdirs()) {
+            throw new RuntimeException("Не удалось создать папку: " + outputFolder);
         }
-        String name = "PSI" + UUID.randomUUID() + ".pdf";
-        File outputFile = new File(outputFolder, name);
+
+//        String name = "PSI_" + UUID.randomUUID() + ".pdf";
+//        File outputFile = new File(outputFolder, name);
+
         logger.info("Конвертирую файл в PDF: {}", outputFile);
+
         try (InputStream inputStream = new ByteArrayInputStream(docxStream.toByteArray())) {
-            officeManager.start();
             DocumentFormatRegistry registry = DefaultDocumentFormatRegistry.getInstance();
             DocumentFormat pdfFormat = registry.getFormatByExtension("pdf");
             if (pdfFormat == null) {
-                logger.error("Не найден формат PDF");
-                throw new FileNotFoundException("Не найден формат PDF");
-
+                throw new FileNotFoundException("Формат PDF не найден");
             }
 
-            LocalConverter.make(officeManager).convert(inputStream).as(pdfFormat).to(outputFile).execute();
+            LocalConverter.make(officeManager)
+                    .convert(inputStream)
+                    .as(pdfFormat)
+                    .to(outputFile)
+                    .execute();
 
-        } finally {
-            if (officeManager.isRunning()) {
-                officeManager.stop();
-            }
+            logger.info("PDF успешно сохранен: {}", outputFile);
+
+        } catch (OfficeException e) {
+            logger.error("Ошибка конвертации в PDF", e);
+            throw new RuntimeException("Ошибка конвертации LibreOffice", e);
         }
-        logger.info("PDF успешно сохранены");
     }
+
 
 
     // Соединение всех pdf в папке в один pdf файл
@@ -154,14 +154,13 @@ public class ConvertorService {
             logger.error("Нет PDF-файлов в указанной папке");
             throw new IllegalArgumentException("Нет PDF-файлов в указанной папке");
         }
-        List<File> sortedFiles = inputFiles.stream()
-                .map(File::new)
-                .sorted(Comparator.comparingLong(File::lastModified))
-                .toList();
-        logger.info("Файлы для слияния (по дате изменения): {}", sortedFiles);
+
 
         PDFMergerUtility merger = new PDFMergerUtility();
         File folder = new File(outputFile);
+
+        File[] files = folder.listFiles((dir, name) -> name.toLowerCase().endsWith(".pdf"));
+        Arrays.sort(files, Comparator.comparing(File::getName));
         if (!folder.exists() && !folder.mkdirs()) {
             logger.error("Не могу создать папку:{}", folder.getAbsolutePath());
             throw new IOException("Не могу создать папку: " + folder.getAbsolutePath());
@@ -169,7 +168,7 @@ public class ConvertorService {
         String uniqueFileName = "merged_output_" + System.currentTimeMillis() + ".pdf";
         String outputFilePath = Paths.get(folder.getAbsolutePath(), uniqueFileName).toString();
         logger.info("Начинаю мёрж PDF-файлов : {},", uniqueFileName);
-        for (File file : sortedFiles) {
+        for (File file : files) {
             merger.addSource(file);
         }
 
@@ -177,8 +176,14 @@ public class ConvertorService {
         merger.mergeDocuments(null);
         logger.info("PDF успешно объединены: {}", outputFilePath);
 
-    }
+        for (File pdfFile : files) {
+            if (pdfFile.delete()) {
+                logger.info("🗑️ Удалён: " + pdfFile.getName());
+            }
+        }
 
+    }
+ //слияние всех Psi.pdf в один документов merge.PDF
     public void mergePDFsPsi(List<String> inputFiles, String outputFile) throws IOException {
         if (inputFiles.isEmpty()) {
             logger.error("Нет PDF-файлов в указанной папке");
@@ -188,7 +193,7 @@ public class ConvertorService {
         List<File> sortedFiles = inputFiles.stream()
                 .map(File::new)
                 .filter(s -> s.getName().startsWith("PSI"))
-                .sorted(Comparator.comparingLong(File::lastModified))
+//                .sorted(Comparator.comparingLong(File::lastModified))
                 .toList();
 
         if (sortedFiles.isEmpty()) {
@@ -202,6 +207,8 @@ public class ConvertorService {
 
         PDFMergerUtility merger = new PDFMergerUtility();
         File folder = new File(outputFile);
+        File[] files = folder.listFiles((dir, name) -> name.toLowerCase().endsWith(".pdf"));
+        Arrays.sort(files, Comparator.comparing(File::getName));
         if (!folder.exists() && !folder.mkdirs()) {
             logger.error("Не могу создать папку:{}", folder.getAbsolutePath());
             throw new IOException("Не могу создать папку: " + folder.getAbsolutePath());
@@ -217,6 +224,10 @@ public class ConvertorService {
         merger.setDestinationFileName(outputFilePath);
         merger.mergeDocuments(null);
         logger.info("PDF успешно объединены: {}", outputFilePath);
-
+        for (File pdfFile : files) {
+            if (pdfFile.delete()) {
+                logger.info("Удалён: " + pdfFile.getName());
+            }
+        }
     }
 }

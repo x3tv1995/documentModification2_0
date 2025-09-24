@@ -1,6 +1,7 @@
 package ru.etna.documentmodification2_0.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,7 +9,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.etna.documentmodification2_0.dto.DocumentFormDTO;
 import ru.etna.documentmodification2_0.dto.PsiFormDto;
+import ru.etna.documentmodification2_0.entity.StatisticsDocHandler;
+import ru.etna.documentmodification2_0.repository.StatsRepository;
 import ru.etna.documentmodification2_0.service.DocumentService;
+import ru.etna.documentmodification2_0.service.StatsService;
+
+import java.util.List;
 
 
 /***
@@ -20,6 +26,25 @@ import ru.etna.documentmodification2_0.service.DocumentService;
 @RequiredArgsConstructor
 public class DocumentController {
     private final DocumentService documentService;
+
+    @Autowired
+    StatsService  statsService;
+    @Autowired
+    private StatsRepository statsRepository;
+
+    @GetMapping("/statsTop5")
+    public String statsTop5(Model model) {
+        List<Object[]> templates = statsService.top5SlowTemplate();
+        model.addAttribute("templates", templates);
+        return "stats";
+    }
+
+    @GetMapping("/stats")
+    public String stats(Model model) {
+        List<StatisticsDocHandler> all = statsRepository.findAll();
+        model.addAttribute("stats", all);
+        return "statsAll";
+    }
 
 
     @GetMapping("/")
