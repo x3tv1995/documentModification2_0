@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 
 import org.springframework.stereotype.Service;
+import ru.etna.documentmodification2_0.configuration.OfficeConfig;
 
 import java.io.*;
 import java.nio.file.Paths;
@@ -58,7 +59,7 @@ public class ConvertorService {
         }
 
 
-        File officeHome = findLibreOfficePath();
+        File officeHome = OfficeConfig.findLibreOfficePath();
         if (officeHome == null) {
             logger.error("""
                     Проверьте, установлена ли LibreOffice и правильно указан путь.
@@ -95,24 +96,24 @@ public class ConvertorService {
 
     }
 
-    private File findLibreOfficePath() {
-        String userHome = System.getProperty("user.home");
-        File[] candidates = {
-                new File(userHome + "/Desktop/DocumentTool/libreoffice"),
-                new File("./libreoffice"),
-                new File("C:/Program Files/LibreOffice"),
-                new File("C:/Program Files (x86)/LibreOffice")
-
-        };
-
-        for (File path : candidates) {
-            if (path.exists() && new File(path, "program/soffice.exe").exists()) {
-                return path;
-            }
-        }
-
-        return null;
-    }
+//   public File findLibreOfficePath() {
+//        String userHome = System.getProperty("user.home");
+//        File[] candidates = {
+//                new File(userHome + "/Desktop/DocumentTool/libreoffice"),
+//                new File("./libreoffice"),
+//                new File("C:/Program Files/LibreOffice"),
+//                new File("C:/Program Files (x86)/LibreOffice")
+//
+//        };
+//
+//        for (File path : candidates) {
+//            if (path.exists() && new File(path, "program/soffice.exe").exists()) {
+//                return path;
+//            }
+//        }
+//
+//        return null;
+//    }
     public void convertFromStreamToPdf(ByteArrayOutputStream docxStream, String outputPdfPath) throws IOException {
         File outputFile = new File(outputPdfPath);
         File outputFolder = new File(outputPdfPath).getParentFile();
