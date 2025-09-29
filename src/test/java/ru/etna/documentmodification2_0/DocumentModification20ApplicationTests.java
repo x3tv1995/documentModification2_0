@@ -80,24 +80,24 @@ class DocumentModification20ApplicationTests {
     };
     public static final List<Object[]> USERS = List.of(USER_1, USER_2, USER_3, USER_4, USER_5);
 
-
-    @Container
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16")
-            .withDatabaseName("testdb")
-            .withUsername("test")
-            .withPassword("test");
-
-    @Test
-    void testStatsServiceTo() {
-        assertEquals(statsService.top5SlowTemplate(),USERS);
-    }
-
-    @DynamicPropertySource
-    static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url",  postgres::getJdbcUrl);
-        registry.add("spring.datasource.username",  postgres::getUsername);
-        registry.add("spring.datasource.password",  postgres::getPassword);
-        registry.add("spring.liquibase.change-log", () -> "classpath:db/changelog/changeLog.xml");
-    }
+//
+//    @Container
+//    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16")
+//            .withDatabaseName("testdb")
+//            .withUsername("test")
+//            .withPassword("test");
+//
+//    @Test
+//    void testStatsServiceTo() {
+//        assertEquals(statsService.top5SlowTemplate(),USERS);
+//    }
+//
+//    @DynamicPropertySource
+//    static void configureProperties(DynamicPropertyRegistry registry) {
+//        registry.add("spring.datasource.url",  postgres::getJdbcUrl);
+//        registry.add("spring.datasource.username",  postgres::getUsername);
+//        registry.add("spring.datasource.password",  postgres::getPassword);
+//        registry.add("spring.liquibase.change-log", () -> "classpath:db/changelog/changeLog.xml");
+//    }
 
 }

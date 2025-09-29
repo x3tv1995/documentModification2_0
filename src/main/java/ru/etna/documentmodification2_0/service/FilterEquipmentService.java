@@ -1,12 +1,13 @@
 package ru.etna.documentmodification2_0.service;
 
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.etna.documentmodification2_0.dto.EquipmentProcessingRequest;
 import ru.etna.documentmodification2_0.enums.CodeMapping;
-import ru.etna.documentmodification2_0.service.equipment.EquipmentHandler;
+import ru.etna.documentmodification2_0.service.equipment.handlerImp.EquipmentHandler;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -18,15 +19,16 @@ import java.util.*;
  * телеграмм @x3tv1995
  */
 @Service
+@RequiredArgsConstructor
 public class FilterEquipmentService {
 
     private static final Map<String, List<String>> EQUIPMENNT = new HashMap<>();
     private static final Logger logger = LoggerFactory.getLogger(FilterEquipmentService.class);
 
-    @Autowired
-    private NumberProductionService numberProductionService;
-    @Autowired
-    private  Map<String, EquipmentHandler> handlers;
+
+    private final NumberProductionService numberProductionService;
+    private final Map<String, EquipmentHandler> handlers;
+
 
     static {
         EQUIPMENNT.put("БТР", new ArrayList<>(List.of("910")));

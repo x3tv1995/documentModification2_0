@@ -1,58 +1,64 @@
 package ru.etna.documentmodification2_0.service.equipment;
 
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ru.etna.documentmodification2_0.dto.DocumentReplaceRequestDTO;
-import ru.etna.documentmodification2_0.dto.EquipmentProcessingRequest;
 import ru.etna.documentmodification2_0.enums.CodeMapping;
 import ru.etna.documentmodification2_0.service.DocxUpdateTextService;
 import ru.etna.documentmodification2_0.service.StartupManagerService;
-import ru.etna.documentmodification2_0.service.psi.equipment.EquipmentHandlerForPsi;
+
 
 @Component("БРПП60")
-public class Brpp60EquipmentHandler implements EquipmentHandler, EquipmentHandlerForPsi {
-    @Autowired
-    private StartupManagerService startupManagerService;
-    @Autowired
-    private DocxUpdateTextService docxUpdateTextService;
+public class Brpp60EquipmentHandler extends AbstractEquipmentHandler {
+
+
+    public Brpp60EquipmentHandler(StartupManagerService startupManagerService, DocxUpdateTextService docxUpdateTextService) {
+        super(startupManagerService, docxUpdateTextService);
+    }
 
     @Override
-    public void handler(EquipmentProcessingRequest equipmentProcessingRequest) throws Exception {
+    protected String getPatternFirst() {
+        return CodeMapping.BRPP60_PATTERN_FIRST.getDescription();
+    }
 
-        String patternFirst = CodeMapping.BRPP60_PATTERN_FIRST.getDescription();
-        String patternDate = CodeMapping.BRPP60_PATTERN_DATE.getDescription();
-        String patternSpace = CodeMapping.BRPP60_PATTERN_SPACEANDSIZEWORD.getDescription();
-        String numberSearch = CodeMapping.BRPP60_PATTERN_NUMBER_SEARCH.getDescription();
-        String patternNumber = CodeMapping.BRPP60_PATTERN_NUMBER.getDescription();
-        String replaceNumber = CodeMapping.BRPP60_PATTERN_REPLACE_NUMBER.getDescription();
-        int fontSize = CodeMapping.BRPP60_PATTERN_SPACEANDSIZEWORD.getSize();
+    @Override
+    protected String getPatternDate() {
+        return CodeMapping.BRPP60_PATTERN_DATE.getDescription();
+    }
 
+    @Override
+    protected String getPatternSpace() {
+        return CodeMapping.BRPP60_PATTERN_SPACEANDSIZEWORD.getDescription();
+    }
 
-        DocumentReplaceRequestDTO dto = new DocumentReplaceRequestDTO(
-                equipmentProcessingRequest.docPath(),
-                equipmentProcessingRequest.lastName(),
-                equipmentProcessingRequest.data(),
-                patternFirst,
-                patternSpace,
-                numberSearch,
-                patternNumber,
-                fontSize,
-                replaceNumber,
-                patternDate,
-                equipmentProcessingRequest.pathExcel(),
-                equipmentProcessingRequest.pathDirectory()
-        );
+    @Override
+    protected String getNumberSearch() {
+        return CodeMapping.BRPP60_PATTERN_NUMBER_SEARCH.getDescription();
+    }
 
-        startupManagerService.enterDatabase(dto, equipmentProcessingRequest.numberInBold(),equipmentProcessingRequest.nameKey());
+    @Override
+    protected String getPatternNumber() {
+        return CodeMapping.BRPP60_PATTERN_NUMBER.getDescription();
+    }
+
+    @Override
+    protected String getReplaceNumber() {
+        return CodeMapping.BRPP60_PATTERN_REPLACE_NUMBER.getDescription();
+    }
+
+    @Override
+    protected int getFontSize() {
+        return CodeMapping.BRPP60_PATTERN_SPACEANDSIZEWORD.getSize();
+    }
+
+    @Override
+    protected String getPsiPatternFirst() {
+        return CodeMapping.BRPP60_PSI_PATTERN_FIRST.getDescription();
+    }
+
+    @Override
+    protected String getPsiPatternDate() {
+        return CodeMapping.BRPP60_PSI_PATTERN_DATE.getDescription();
     }
 
 
-    @Override
-    public void handlerPsi(String lastName, XWPFDocument document, int sizeText) {
-        String patternFirst = CodeMapping.BRPP60_PSI_PATTERN_FIRST.getDescription();
-        String patternDate =  CodeMapping.BRPP60_PSI_PATTERN_DATE.getDescription();
-        docxUpdateTextService.searchTitleForPsi(patternFirst,lastName,patternDate,document,sizeText);
-    }
 
 }

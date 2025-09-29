@@ -10,7 +10,7 @@ public class PsiFormDto {
     private String pathDirectory;// путь до папки где будем сохранять pdf файлы
     private MultipartFile docPath;//путь до документа который будем изменять
     private String lastName;
-    private String pdfInputFolder; //путь где лежать несколько pdf файлов из которых будем делать один pdf файл
+    private String pdfInputFolder; //путь где лежат несколько pdf файлов из которых будем делать один pdf файл
     private MultipartFile pathExcel;
 
     public PsiFormDto() {

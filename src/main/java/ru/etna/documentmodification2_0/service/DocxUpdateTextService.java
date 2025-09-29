@@ -1,5 +1,6 @@
 package ru.etna.documentmodification2_0.service;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
@@ -24,10 +25,12 @@ import java.util.regex.Pattern;
  * телеграмм @x3tv1995
  */
 @Service
+@RequiredArgsConstructor
 public class DocxUpdateTextService {
     private final Logger logger = LoggerFactory.getLogger(DocxUpdateTextService.class);
-    @Autowired
-    ConvertorService convertorService;
+    private final  ConvertorService convertorService;
+
+
 
     public  void processSingleNumber(byte[] templateBytes,
                                      DocumentReplaceRequestDTO requestDTO,

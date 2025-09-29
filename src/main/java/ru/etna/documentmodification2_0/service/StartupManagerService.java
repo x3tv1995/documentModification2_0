@@ -1,14 +1,13 @@
 package ru.etna.documentmodification2_0.service;
 
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.etna.documentmodification2_0.dto.DocumentReplaceRequestDTO;
-import ru.etna.documentmodification2_0.dto.EquipmentProcessingRequest;
 import ru.etna.documentmodification2_0.entity.StatisticsDocHandler;
 import ru.etna.documentmodification2_0.repository.StatsRepository;
-import ru.etna.documentmodification2_0.service.equipment.EquipmentHandler;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -27,17 +26,15 @@ import java.util.concurrent.Executors;
  * телеграмм @x3tv1995
  */
 @Service
+@RequiredArgsConstructor
 public class StartupManagerService {
 
-    @Autowired
-    private DocxUpdateTextService docxUpdateTextService;
-    @Autowired
-    private NumberProductionService numberProductionService;
+
     private static final Logger log = LoggerFactory.getLogger(StartupManagerService.class);
-    @Autowired
-    private StatsRepository statsRepository;
 
-
+    private final DocxUpdateTextService docxUpdateTextService;
+    private final NumberProductionService numberProductionService;
+    private final StatsRepository statsRepository;
 
 
     public void enterDatabase(DocumentReplaceRequestDTO documentReplaceRequestDTO,

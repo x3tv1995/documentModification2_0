@@ -1,43 +1,59 @@
 package ru.etna.documentmodification2_0.service.equipment;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ru.etna.documentmodification2_0.dto.DocumentReplaceRequestDTO;
-import ru.etna.documentmodification2_0.dto.EquipmentProcessingRequest;
 import ru.etna.documentmodification2_0.enums.CodeMapping;
+import ru.etna.documentmodification2_0.service.DocxUpdateTextService;
 import ru.etna.documentmodification2_0.service.StartupManagerService;
 
+
 @Component("ЭК")
-public class EkEquipmentHandler implements EquipmentHandler{
-    @Autowired
-    private StartupManagerService startupManagerService;
+public class EkEquipmentHandler extends AbstractEquipmentHandler {
+    public EkEquipmentHandler(StartupManagerService startupManagerService, DocxUpdateTextService docxUpdateTextService) {
+        super(startupManagerService, docxUpdateTextService);
+    }
 
     @Override
-    public void handler(EquipmentProcessingRequest equipmentProcessingRequest) throws Exception {
-        String patternFirst = CodeMapping.EK_PATTERN_FIRST.getDescription();
-        String patternDate = CodeMapping.EK_PATTERN_DATE.getDescription();
-        String patternSpace = CodeMapping.EK_PATTERN_SPACEANDSIZEWORD.getDescription();
-        String numberSearch = CodeMapping.EK_PATTERN_NUMBER_SEARCH.getDescription();
-        String patternNumber = CodeMapping.EK_PATTERN_NUMBER.getDescription();
-        String replaceNumber = CodeMapping.EK_PATTERN_REPLACE_NUMBER.getDescription();
-        int fontSize = CodeMapping.EK_PATTERN_SPACEANDSIZEWORD.getSize();
+    protected String getPatternFirst() {
+        return CodeMapping.EK_PATTERN_FIRST.getDescription();
+    }
 
+    @Override
+    protected String getPatternDate() {
+        return CodeMapping.EK_PATTERN_DATE.getDescription();
+    }
 
-        DocumentReplaceRequestDTO dto = new DocumentReplaceRequestDTO(
-                equipmentProcessingRequest.docPath(),
-                equipmentProcessingRequest.lastName(),
-                equipmentProcessingRequest.data(),
-                patternFirst,
-                patternSpace,
-                numberSearch,
-                patternNumber,
-                fontSize,
-                replaceNumber,
-                patternDate,
-                equipmentProcessingRequest.pathExcel(),
-                equipmentProcessingRequest.pathDirectory()
-        );
+    @Override
+    protected String getPatternSpace() {
+        return CodeMapping.EK_PATTERN_SPACEANDSIZEWORD.getDescription();
+    }
 
-        startupManagerService.enterDatabase(dto, equipmentProcessingRequest.numberInBold(),equipmentProcessingRequest.nameKey());
+    @Override
+    protected String getNumberSearch() {
+        return CodeMapping.EK_PATTERN_NUMBER_SEARCH.getDescription();
+    }
+
+    @Override
+    protected String getPatternNumber() {
+        return CodeMapping.EK_PATTERN_NUMBER.getDescription();
+    }
+
+    @Override
+    protected String getReplaceNumber() {
+        return CodeMapping.EK_PATTERN_REPLACE_NUMBER.getDescription();
+    }
+
+    @Override
+    protected int getFontSize() {
+        return CodeMapping.EK_PATTERN_SPACEANDSIZEWORD.getSize();
+    }
+
+    @Override
+    protected String getPsiPatternFirst() {
+        return CodeMapping.EK_PSI_PATTERN_FIRST.getDescription();
+    }
+
+    @Override
+    protected String getPsiPatternDate() {
+        return CodeMapping.EK_PSI_PATTERN_DATE.getDescription();
     }
 }

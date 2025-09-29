@@ -3,10 +3,9 @@ package ru.etna.documentmodification2_0.configuration;
 import org.jodconverter.core.office.OfficeException;
 import org.jodconverter.core.office.OfficeManager;
 import org.jodconverter.local.office.LocalOfficeManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import ru.etna.documentmodification2_0.service.ConvertorService;
+
 
 import java.io.File;
 
@@ -29,7 +28,7 @@ public class OfficeConfig {
             throw new RuntimeException("Не удалось запустить LibreOffice", e);
         }
     }
-    public static File findLibreOfficePath() {
+    private static File findLibreOfficePath() {
         String userHome = System.getProperty("user.home");
         File[] candidates = {
                 new File(userHome + "/Desktop/DocumentTool/libreoffice"),

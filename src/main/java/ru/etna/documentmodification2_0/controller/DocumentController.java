@@ -26,11 +26,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DocumentController {
     private final DocumentService documentService;
-
-    @Autowired
-    StatsService  statsService;
-    @Autowired
-    private StatsRepository statsRepository;
+    private final   StatsService  statsService;
+    private final StatsRepository statsRepository;
 
     @GetMapping("/statsTop5")
     public String statsTop5(Model model) {

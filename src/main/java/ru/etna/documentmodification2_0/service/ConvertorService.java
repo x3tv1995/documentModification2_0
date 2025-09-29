@@ -1,5 +1,6 @@
 package ru.etna.documentmodification2_0.service;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 
 import org.jodconverter.core.document.DefaultDocumentFormatRegistry;
@@ -15,14 +16,12 @@ import org.slf4j.LoggerFactory;
 
 
 import org.springframework.stereotype.Service;
-import ru.etna.documentmodification2_0.configuration.OfficeConfig;
 
 import java.io.*;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-
 
 
 /***
@@ -32,16 +31,13 @@ import java.util.List;
  */
 
 @Service
+@RequiredArgsConstructor
 public class ConvertorService {
     private final Logger logger = LoggerFactory.getLogger(ConvertorService.class);
-    OfficeManager officeManager;
+    private final OfficeManager officeManager;
 
 
-    public ConvertorService(OfficeManager officeManager) {
-        this.officeManager = officeManager;
-    }
-
-    public void convertorDocToPdf(String docPath, String pdfPath,String number) throws OfficeException, IOException {
+    public void convertorDocToPdf(String docPath, String pdfPath, String number) throws OfficeException, IOException {
         File inputFile = new File(docPath);
 
         if (pdfPath == null || pdfPath.isEmpty()) {
@@ -59,7 +55,7 @@ public class ConvertorService {
         }
 
 
-        File officeHome = OfficeConfig.findLibreOfficePath();
+        File officeHome = findLibreOfficePath();
         if (officeHome == null) {
             logger.error("""
                     Проверьте, установлена ли LibreOffice и правильно указан путь.
@@ -69,51 +65,52 @@ public class ConvertorService {
 
         }
 
-            DocumentFormatRegistry registry = DefaultDocumentFormatRegistry.getInstance();
-            DocumentFormat docxFormat = registry.getFormatByExtension("docx");
-            DocumentFormat pdfFormat = registry.getFormatByExtension("pdf");
+        DocumentFormatRegistry registry = DefaultDocumentFormatRegistry.getInstance();
+        DocumentFormat docxFormat = registry.getFormatByExtension("docx");
+        DocumentFormat pdfFormat = registry.getFormatByExtension("pdf");
 
-            if (docxFormat == null) {
-                logger.error("Не найден формат DOC");
-                throw new IllegalStateException("Не удалось получить формат DOCX или PDF");
-            }
-            if (pdfFormat == null) {
-                logger.error("Не найден формат PDF");
-                throw new FileNotFoundException("Не найден формат PDF");
-            } else {
-                logger.info("PDF формат найден{}", pdfFormat.getName());
-            }
+        if (docxFormat == null) {
+            logger.error("Не найден формат DOC");
+            throw new IllegalStateException("Не удалось получить формат DOCX или PDF");
+        }
+        if (pdfFormat == null) {
+            logger.error("Не найден формат PDF");
+            throw new FileNotFoundException("Не найден формат PDF");
+        } else {
+            logger.info("PDF формат найден{}", pdfFormat.getName());
+        }
 
 
-            LocalConverter.make(officeManager)
-                    .convert(inputFile)
-                    .as(pdfFormat)
-                    .to(outputFile)
-                    .execute();
+        LocalConverter.make(officeManager)
+                .convert(inputFile)
+                .as(pdfFormat)
+                .to(outputFile)
+                .execute();
 
-            logger.info("Конвертация выполнена успешно!");
+        logger.info("Конвертация выполнена успешно!");
 
 
     }
 
-//   public File findLibreOfficePath() {
-//        String userHome = System.getProperty("user.home");
-//        File[] candidates = {
-//                new File(userHome + "/Desktop/DocumentTool/libreoffice"),
-//                new File("./libreoffice"),
-//                new File("C:/Program Files/LibreOffice"),
-//                new File("C:/Program Files (x86)/LibreOffice")
-//
-//        };
-//
-//        for (File path : candidates) {
-//            if (path.exists() && new File(path, "program/soffice.exe").exists()) {
-//                return path;
-//            }
-//        }
-//
-//        return null;
-//    }
+    public File findLibreOfficePath() {
+        String userHome = System.getProperty("user.home");
+        File[] candidates = {
+                new File(userHome + "/Desktop/DocumentTool/libreoffice"),
+                new File("./libreoffice"),
+                new File("C:/Program Files/LibreOffice"),
+                new File("C:/Program Files (x86)/LibreOffice")
+
+        };
+
+        for (File path : candidates) {
+            if (path.exists() && new File(path, "program/soffice.exe").exists()) {
+                return path;
+            }
+        }
+
+        return null;
+    }
+
     public void convertFromStreamToPdf(ByteArrayOutputStream docxStream, String outputPdfPath) throws IOException {
         File outputFile = new File(outputPdfPath);
         File outputFolder = new File(outputPdfPath).getParentFile();
@@ -146,7 +143,6 @@ public class ConvertorService {
             throw new RuntimeException("Ошибка конвертации LibreOffice", e);
         }
     }
-
 
 
     // Соединение всех pdf в папке в один pdf файл
@@ -184,7 +180,8 @@ public class ConvertorService {
         }
 
     }
- //слияние всех Psi.pdf в один документов merge.PDF
+
+    //слияние всех Psi.pdf в один документов merge.PDF
     public void mergePDFsPsi(List<String> inputFiles, String outputFile) throws IOException {
         if (inputFiles.isEmpty()) {
             logger.error("Нет PDF-файлов в указанной папке");

@@ -1,54 +1,60 @@
 package ru.etna.documentmodification2_0.service.equipment;
 
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ru.etna.documentmodification2_0.dto.DocumentReplaceRequestDTO;
-import ru.etna.documentmodification2_0.dto.EquipmentProcessingRequest;
 import ru.etna.documentmodification2_0.enums.CodeMapping;
 import ru.etna.documentmodification2_0.service.DocxUpdateTextService;
 import ru.etna.documentmodification2_0.service.StartupManagerService;
-import ru.etna.documentmodification2_0.service.psi.equipment.EquipmentHandlerForPsi;
 
 @Component("ОКВА")
-public class OkvaEquipmentHandler implements EquipmentHandler, EquipmentHandlerForPsi {
-    @Autowired
-    private StartupManagerService startupManagerService;
-    @Autowired
-    private DocxUpdateTextService docxUpdateTextService;
-    @Override
-    public void handler(EquipmentProcessingRequest equipmentProcessingRequest) throws Exception {
+public class OkvaEquipmentHandler extends AbstractEquipmentHandler {
 
-        String patternFirst = CodeMapping.OKVA_PATTERN_FIRST.getDescription();
-        String patternDate = CodeMapping.OKVA_PATTERN_DATE.getDescription();
-        String patternSpace = CodeMapping.OKVA_SPACEANDSIZEWORD.getDescription();
-        String numberSearch = CodeMapping.OKVA_NUMBER_SEARCH.getDescription();
-        String patternNumber = CodeMapping.OKVA_NUMBER.getDescription();
-        String replaceNumber = CodeMapping.OKVA_PATTERN_REPLACE_NUMBER.getDescription();
-        int fontSize = CodeMapping.OKVA_SPACEANDSIZEWORD.getSize();
-
-
-        DocumentReplaceRequestDTO dto = new DocumentReplaceRequestDTO(
-                equipmentProcessingRequest.docPath(),
-                equipmentProcessingRequest.lastName(),
-                equipmentProcessingRequest.data(),
-                patternFirst,
-                patternSpace,
-                numberSearch,
-                patternNumber,
-                fontSize,
-                replaceNumber,
-                patternDate,
-                equipmentProcessingRequest.pathExcel(),
-                equipmentProcessingRequest.pathDirectory()
-        );
-
-        startupManagerService.enterDatabase(dto, equipmentProcessingRequest.numberInBold(),equipmentProcessingRequest.nameKey());
+    public OkvaEquipmentHandler(StartupManagerService startupManagerService, DocxUpdateTextService docxUpdateTextService) {
+        super(startupManagerService, docxUpdateTextService);
     }
+
     @Override
-    public void handlerPsi(String lastName, XWPFDocument document, int sizeText) {
-        String patternFirst = CodeMapping.OKVT_PSI_PATTERN_FIRST.getDescription();
-        String patternDate =  CodeMapping.OKVT_PSI_PATTERN_DATE.getDescription();
-        docxUpdateTextService.searchTitleForPsi(patternFirst,lastName,patternDate,document,sizeText);
+    protected String getPatternFirst() {
+        return CodeMapping.OKVA_PATTERN_FIRST.getDescription();
     }
+
+    @Override
+    protected String getPatternDate() {
+        return CodeMapping.OKVA_PATTERN_DATE.getDescription();
+    }
+
+    @Override
+    protected String getPatternSpace() {
+        return CodeMapping.OKVA_SPACEANDSIZEWORD.getDescription();
+    }
+
+    @Override
+    protected String getNumberSearch() {
+        return CodeMapping.OKVA_NUMBER_SEARCH.getDescription();
+    }
+
+    @Override
+    protected String getPatternNumber() {
+        return CodeMapping.OKVA_NUMBER.getDescription();
+    }
+
+    @Override
+    protected String getReplaceNumber() {
+        return CodeMapping.OKVA_PATTERN_REPLACE_NUMBER.getDescription();
+    }
+
+    @Override
+    protected int getFontSize() {
+        return CodeMapping.OKVA_SPACEANDSIZEWORD.getSize();
+    }
+
+    @Override
+    protected String getPsiPatternFirst() {
+        return CodeMapping.OKVT_PSI_PATTERN_FIRST.getDescription();
+    }
+
+    @Override
+    protected String getPsiPatternDate() {
+        return CodeMapping.OKVT_PSI_PATTERN_DATE.getDescription();
+    }
+
 }

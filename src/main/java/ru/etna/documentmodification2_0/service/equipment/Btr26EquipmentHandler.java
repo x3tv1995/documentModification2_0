@@ -1,55 +1,61 @@
 package ru.etna.documentmodification2_0.service.equipment;
 
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ru.etna.documentmodification2_0.dto.DocumentReplaceRequestDTO;
-import ru.etna.documentmodification2_0.dto.EquipmentProcessingRequest;
 import ru.etna.documentmodification2_0.enums.CodeMapping;
 import ru.etna.documentmodification2_0.service.DocxUpdateTextService;
 import ru.etna.documentmodification2_0.service.StartupManagerService;
-import ru.etna.documentmodification2_0.service.psi.equipment.EquipmentHandlerForPsi;
 
 @Component("БТР26")
-public class Btr26EquipmentHandler implements EquipmentHandler, EquipmentHandlerForPsi {
-    @Autowired
-    private StartupManagerService startupManagerService;
-    @Autowired
-    private DocxUpdateTextService docxUpdateTextService;
+public class Btr26EquipmentHandler extends AbstractEquipmentHandler {
+
+
+    public Btr26EquipmentHandler(StartupManagerService startupManagerService, DocxUpdateTextService docxUpdateTextService) {
+        super(startupManagerService, docxUpdateTextService);
+    }
 
     @Override
-    public void handler(EquipmentProcessingRequest equipmentProcessingRequest) throws Exception {
-
-        String patternFirst = CodeMapping.BTR26_PATTERN_FIRST.getDescription();
-        String patternDate = CodeMapping.BTR26_PATTERN_DATE.getDescription();
-        String patternSpace = CodeMapping.BTR26_PATTERN_SPACEANDSIZEWORD.getDescription();
-        String numberSearch = CodeMapping.BTR26_PATTERN_NUMBER_SEARCH.getDescription();
-        String patternNumber = CodeMapping.BTR26_PATTERN_NUMBER.getDescription();
-        String replaceNumber = CodeMapping.BTR26_PATTERN_REPLACE_NUMBER.getDescription();
-        int fontSize = CodeMapping.BTR26_PATTERN_SPACEANDSIZEWORD.getSize();
-
-
-        DocumentReplaceRequestDTO dto = new DocumentReplaceRequestDTO(
-                equipmentProcessingRequest.docPath(),
-                equipmentProcessingRequest.lastName(),
-                equipmentProcessingRequest.data(),
-                patternFirst,
-                patternSpace,
-                numberSearch,
-                patternNumber,
-                fontSize,
-                replaceNumber,
-                patternDate,
-                equipmentProcessingRequest.pathExcel(),
-                equipmentProcessingRequest.pathDirectory()
-        );
-
-        startupManagerService.enterDatabase(dto, equipmentProcessingRequest.numberInBold(),equipmentProcessingRequest.nameKey());
+    protected String getPatternFirst() {
+        return CodeMapping.BTR26_PATTERN_FIRST.getDescription();
     }
+
     @Override
-    public void handlerPsi(String lastName, XWPFDocument document, int sizeText) {
-        String patternFirst = CodeMapping.BTR4DL_PSI_PATTERN_FIRST.getDescription();
-        String patternDate =  CodeMapping.BTR4DL_PSI_PATTERN_DATE.getDescription();
-        docxUpdateTextService.searchTitleForPsi(patternFirst,lastName,patternDate,document,sizeText);
+    protected String getPatternDate() {
+        return CodeMapping.BTR26_PATTERN_DATE.getDescription();
     }
+
+    @Override
+    protected String getPatternSpace() {
+        return CodeMapping.BTR26_PATTERN_SPACEANDSIZEWORD.getDescription();
+    }
+
+    @Override
+    protected String getNumberSearch() {
+        return CodeMapping.BTR26_PATTERN_NUMBER_SEARCH.getDescription();
+    }
+
+    @Override
+    protected String getPatternNumber() {
+        return CodeMapping.BTR26_PATTERN_NUMBER.getDescription();
+    }
+
+    @Override
+    protected String getReplaceNumber() {
+        return CodeMapping.BTR26_PATTERN_REPLACE_NUMBER.getDescription();
+    }
+
+    @Override
+    protected int getFontSize() {
+        return CodeMapping.BTR26_PATTERN_SPACEANDSIZEWORD.getSize();
+    }
+
+    @Override
+    protected String getPsiPatternFirst() {
+        return CodeMapping.BTR4DL_PSI_PATTERN_FIRST.getDescription();
+    }
+
+    @Override
+    protected String getPsiPatternDate() {
+        return CodeMapping.BTR4DL_PSI_PATTERN_DATE.getDescription();
+    }
+
 }
