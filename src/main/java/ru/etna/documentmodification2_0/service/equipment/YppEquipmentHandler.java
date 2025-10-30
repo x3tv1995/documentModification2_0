@@ -26,17 +26,17 @@ public class YppEquipmentHandler extends AbstractEquipmentHandler {
 
     @Override
     protected String getPatternSpace() {
-        return "";
-    }
-
-    @Override
-    protected String getNumberSearch() {
         return CodeMapping.YPP_PATTERN_SPACEANDSIZEWORD.getDescription();
     }
 
     @Override
-    protected String getPatternNumber() {
+    protected String getNumberSearch() {
         return CodeMapping.YPP_PATTERN_NUMBER_SEARCH.getDescription();
+    }
+
+    @Override
+    protected String getPatternNumber() {
+        return CodeMapping.YPP_PATTERN_NUMBER.getDescription();
     }
 
     @Override

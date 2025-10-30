@@ -169,14 +169,14 @@ public enum CodeMapping {
 
     PB_PATTERN_FIRST("Представитель ОТК   _______________   ", 10),
     PB_PATTERN_DATE("                     __________", 10),
-    PB_SPACEANDSIZEWORD("                                 ", 10),
-    PB_NUMBER_SEARCH("\\s*заводской\\s*№\\s*_+\\s*", 10),
-    PB_NUMBER("заводской № ", 10),
+    PB_PATTERN_SPACEANDSIZEWORD("                                 ", 10),
+    PB_PATTERN_NUMBER_SEARCH("\\s*заводской\\s*№\\s*_+\\s*", 10),
+    PB_PATTERN_NUMBER("заводской № ", 10),
     PB_PATTERN_REPLACE_NUMBER("\\s*заводской\\s*№\\s*[A-Za-z0-9]{9}", 10),
 
     YPP_PATTERN_FIRST("Представитель ОТК   __________________      ", 10),
-    YPP_PATTERN_DATE("                   _______", 10),
-    YPP_PATTERN_SPACEANDSIZEWORD("              ", 10),
+    YPP_PATTERN_DATE("                     _______", 10),
+    YPP_PATTERN_SPACEANDSIZEWORD("                  ", 10),
     YPP_PATTERN_NUMBER_SEARCH("\\s*заводской\\s*№\\s*_+\\s*", 10),
     YPP_PATTERN_NUMBER(" заводской № ", 10),
     YPP_PATTERN_REPLACE_NUMBER("\\s*заводской\\s*№\\s*[A-Za-z0-9]{9}", 10),
@@ -282,9 +282,9 @@ public enum CodeMapping {
     YPP_18_PATTERN_REPLACE_NUMBER("\\s*заводской\\s*№\\s*[A-Za-z0-9]{9}", 10),
 
 
-    ORT_PATTERN_FIRST("       Представитель ОТК   _______________          ", 10),
-    ORT_PATTERN_DATE("                ______", 10),
-    ORT_PATTERN_SPACEANDSIZEWORD("          ", 10),
+    ORT_PATTERN_FIRST("       Представитель ОТК   _______________       ", 10),
+    ORT_PATTERN_DATE("                _______", 10),
+    ORT_PATTERN_SPACEANDSIZEWORD("             ", 10),
     ORT_PATTERN_NUMBER_SEARCH("\\s*заводской\\s*№\\s*_+\\s*", 10),
     ORT_PATTERN_NUMBER("заводской № ", 10),
     ORT_PATTERN_REPLACE_NUMBER("\\s*заводской\\s*№\\s*[A-Za-z0-9]{9}", 10),
